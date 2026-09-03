@@ -1,6 +1,15 @@
 @import "./local-fonts.css";
+@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
+
+html.lang-bn, html.lang-bn body, html.lang-bn button, html.lang-bn input, html.lang-bn textarea, html.lang-bn select {
+  font-family: "Hind Siliguri", sans-serif;
+}
+html.lang-bn h1, html.lang-bn h2, html.lang-bn h3, html.lang-bn .hero-title, html.lang-bn .journey-number, html.lang-bn .kicker-number {
+  font-family: "Hind Siliguri", sans-serif;
+  letter-spacing: 0;
+}
 
 @custom-variant dark (&:is(.dark *));
 
@@ -1856,12 +1865,25 @@ textarea:focus-visible {
 .journey-step {
   position: relative;
   min-height: 325px;
-  padding: 66px 30px 0 0;
+  padding: 66px 30px 20px 20px;
+  margin-left: -20px; /* Offset for padding */
+  border-radius: 4px;
+  transition: background 0.4s ease, box-shadow 0.4s ease, transform 0.4s ease;
+}
+
+.journey-step:hover {
+  background: rgba(255, 255, 255, 0.02);
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.2);
+  transform: translateY(-4px);
 }
 
 .journey-step:not(:first-of-type) {
   padding-left: 30px;
+  margin-left: 0;
   border-left: 1px solid rgba(239, 232, 220, 0.12);
+}
+.journey-step:not(:first-of-type):hover {
+  border-left-color: transparent;
 }
 
 .journey-marker {
@@ -1879,9 +1901,15 @@ textarea:focus-visible {
   font-family: "Manrope", sans-serif;
   font-size: 7px;
   letter-spacing: 0.08em;
+  transition: background 0.4s ease, color 0.4s ease;
 }
 
-.journey-step:first-of-type .journey-marker { left: -1px; }
+.journey-step:hover .journey-marker {
+  background: var(--brass);
+  color: var(--teal-900);
+}
+
+.journey-step:first-of-type .journey-marker { left: 19px; }
 
 .journey-icon {
   position: absolute;
@@ -1890,18 +1918,36 @@ textarea:focus-visible {
   width: 39px;
   height: 39px;
   opacity: 0.8;
+  transition: opacity 0.4s ease;
+}
+
+.journey-step:hover .journey-icon {
+  opacity: 1;
 }
 
 .journey-icon i { position: absolute; display: block; border: 1px solid var(--brass); }
-.icon-consultation i:first-child { inset: 6px 10px 10px 6px; transform: rotate(45deg); }
-.icon-consultation i:last-child { inset: 14px 4px 2px 14px; border-radius: 50%; }
+
+/* Icon Animations */
+@keyframes consultFloat { 0%, 100% { transform: rotate(45deg) translate(0, 0); } 50% { transform: rotate(45deg) translate(2px, -2px); } }
+@keyframes consultPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+.icon-consultation i:first-child { inset: 6px 10px 10px 6px; transform: rotate(45deg); animation: consultFloat 3s ease-in-out infinite; }
+.icon-consultation i:last-child { inset: 14px 4px 2px 14px; border-radius: 50%; animation: consultPulse 3s ease-in-out infinite; }
+
+@keyframes targetSpin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+.icon-materials { animation: targetSpin 12s linear infinite; transform-origin: center; }
 .icon-materials i:first-child { inset: 4px; border-radius: 50%; }
 .icon-materials i:nth-child(2) { top: 2px; left: 19px; height: 34px; }
 .icon-materials i:last-child { top: 19px; left: 2px; width: 34px; }
-.icon-crafting i:first-child { top: 7px; left: 4px; width: 30px; height: 22px; transform: skewY(-25deg); }
-.icon-crafting i:last-child { right: 1px; bottom: 3px; width: 25px; height: 10px; transform: rotate(-25deg); }
-.icon-installation i:first-child { inset: 4px 4px 13px 13px; }
-.icon-installation i:nth-child(2) { inset: 13px 13px 4px 4px; }
+
+@keyframes craftShift1 { 0%, 100% { transform: skewY(-25deg) translate(0, 0); } 50% { transform: skewY(-25deg) translate(-2px, 2px); } }
+@keyframes craftShift2 { 0%, 100% { transform: rotate(-25deg) translate(0, 0); } 50% { transform: rotate(-25deg) translate(2px, -2px); } }
+.icon-crafting i:first-child { top: 7px; left: 4px; width: 30px; height: 22px; transform: skewY(-25deg); animation: craftShift1 3s ease-in-out infinite; }
+.icon-crafting i:last-child { right: 1px; bottom: 3px; width: 25px; height: 10px; transform: rotate(-25deg); animation: craftShift2 3s ease-in-out infinite; }
+
+@keyframes installAlign1 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(2px, 2px); } }
+@keyframes installAlign2 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-2px, -2px); } }
+.icon-installation i:first-child { inset: 4px 4px 13px 13px; animation: installAlign1 3s ease-in-out infinite; }
+.icon-installation i:nth-child(2) { inset: 13px 13px 4px 4px; animation: installAlign2 3s ease-in-out infinite; }
 .icon-installation i:last-child { top: 17px; left: 17px; width: 6px; height: 6px; border-radius: 50%; background: var(--brass); }
 
 .journey-copy { max-width: 230px; }
@@ -5153,4 +5199,157 @@ textarea:focus-visible {
   opacity: 1;
   transform: scale(1);
   z-index: 1;
+}
+
+/* --- New Additions: Marquee, Team Photo, Award Badge --- */
+
+/* Auto-Scrolling Marquee */
+.marquee-container {
+  overflow: hidden;
+  white-space: nowrap;
+  background: var(--teal-900);
+  border-top: 1px solid rgba(239, 232, 220, 0.05);
+  border-bottom: 1px solid rgba(239, 232, 220, 0.05);
+  padding: 14px 0;
+  display: flex;
+  margin-top: -2px; /* Overlap hero border slightly if needed */
+}
+
+.marquee-content {
+  display: flex;
+  gap: 40px;
+  animation: marquee-scroll 40s linear infinite;
+  color: var(--parchment-muted);
+  font-family: "Manrope", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.marquee-content span {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(calc(-50% - 20px)); }
+}
+
+/* Team Photo */
+.team-photo-container {
+  position: relative;
+  background: var(--teal-850);
+  border-radius: 2px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.team-photo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 1px;
+  filter: contrast(1.1) sepia(0.2) brightness(0.9);
+}
+
+.team-photo-label {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  color: var(--parchment);
+  font-family: "Manrope", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: rgba(26, 36, 33, 0.85);
+  backdrop-filter: blur(4px);
+  padding: 6px 10px;
+  border-left: 2px solid var(--brass-light);
+}
+
+/* Award Badge */
+.credibility-intro {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+@media (min-width: 768px) {
+  .credibility-intro {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+}
+
+.award-badge-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255,255,255,0.015);
+  padding: 16px 24px;
+  border-radius: 4px;
+  border: 1px solid rgba(183, 154, 107, 0.12);
+  max-width: 200px;
+}
+
+.award-badge-img {
+  max-width: 90px;
+  height: auto;
+  filter: drop-shadow(0 6px 16px rgba(0,0,0,0.5));
+}
+
+.award-badge-container span {
+  font-family: "Manrope", sans-serif;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--brass-light);
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.lang-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  color: var(--parchment);
+  border: 1px solid rgba(239, 232, 220, 0.2);
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-family: "Manrope", sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.lang-toggle:hover {
+  background: rgba(239, 232, 220, 0.1);
+  border-color: rgba(239, 232, 220, 0.4);
+}
+
+.collection-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.collection-price {
+  font-family: "Manrope", sans-serif;
+  font-size: 11px;
+  color: var(--brass-light);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  margin-top: 6px;
+  display: block;
 }

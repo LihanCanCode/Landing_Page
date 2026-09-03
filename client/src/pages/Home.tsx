@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Check, Facebook, Instagram, Mail, MapPin, Menu, MessageCircle, MoveUpRight, Phone, Play, X, Youtube } from "lucide-react";
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Check, Facebook, Instagram, Mail, MapPin, Menu, MessageCircle, MoveUpRight, Phone, Play, X, Youtube, Globe } from "lucide-react";
 import { getWhatsAppLink } from "@shared/contact";
 import { motion, AnimatePresence, useReducedMotion, Variants } from "framer-motion";
+import { i18n } from "../i18n";
+import RoomARPreview from "../components/RoomARPreview";
 
 /**
  * Atelier Nocturne reminder: this page is intentionally limited to a cinematic Hero and a quiet,
@@ -12,33 +14,36 @@ import { motion, AnimatePresence, useReducedMotion, Variants } from "framer-moti
 const heroRoom = "/assets/hero_luxury_showroom.png";
 const archMark = "/assets/heaven-arch-mark.svg";
 
-const materials = [
-  { id: "teak", group: "Wood", name: "Burma Teak", detail: "Warm honey grain / hand-finished", specs: { moisture: "10% Kiln-Dried", density: "680 kg/m³", durability: "High Termite Resistance" }, className: "material-teak" },
-  { id: "walnut", group: "Wood", name: "Walnut", detail: "Smoked umber grain / satin oil", specs: { moisture: "12% Kiln-Dried", density: "610 kg/m³", durability: "Medium Resistance" }, className: "material-walnut" },
-  { id: "sheesham", group: "Wood", name: "Sheesham", detail: "Toasted rose grain / waxed", specs: { moisture: "8% Kiln-Dried", density: "770 kg/m³", durability: "Ultra High Durability" }, className: "material-sheesham" },
-  { id: "black", group: "Wood", name: "Matte Black Lacquer", detail: "Deep charcoal / soft-touch", specs: { moisture: "10% Kiln-Dried", density: "650 kg/m³", durability: "Scratch-Resistant Coat" }, className: "material-black" },
-  { id: "velvet", group: "Fabric", name: "Premium Velvet", detail: "Parchment pile / low sheen", specs: { rubCount: "40,000+ Martindale", comp: "100% Polyester", care: "Professional Dry Clean" }, className: "material-velvet" },
-  { id: "leather", group: "Fabric", name: "Genuine Leather", detail: "Cognac hide / natural patina", specs: { rubCount: "Full Grain Hide", comp: "100% Bovine Leather", care: "Wax Polish Bi-Annually" }, className: "material-leather" },
-  { id: "linen", group: "Fabric", name: "Linen", detail: "Oat weave / relaxed hand", specs: { rubCount: "30,000+ Martindale", comp: "60% Linen, 40% Cotton", care: "Spot Clean Only" }, className: "material-linen" },
+const getMaterials = (t: any) => [
+  { id: "teak", group: t.matWood || "Wood", name: t.matTeakName || "Burma Teak", detail: t.matTeakDetail || "Warm honey grain / hand-finished", specs: { [t.specMoisture || "moisture"]: "10%", [t.specDensity || "density"]: "680 kg/m³", [t.specDurability || "durability"]: t.matTeakDur || "High Termite Resistance" }, className: "material-teak" },
+  { id: "walnut", group: t.matWood || "Wood", name: t.matWalnutName || "Walnut", detail: t.matWalnutDetail || "Smoked umber grain / satin oil", specs: { [t.specMoisture || "moisture"]: "12%", [t.specDensity || "density"]: "610 kg/m³", [t.specDurability || "durability"]: t.matWalnutDur || "Medium Resistance" }, className: "material-walnut" },
+  { id: "sheesham", group: t.matWood || "Wood", name: t.matSheeshamName || "Sheesham", detail: t.matSheeshamDetail || "Toasted rose grain / waxed", specs: { [t.specMoisture || "moisture"]: "8%", [t.specDensity || "density"]: "770 kg/m³", [t.specDurability || "durability"]: t.matSheeshamDur || "Ultra High Durability" }, className: "material-sheesham" },
+  { id: "black", group: t.matWood || "Wood", name: t.matBlackName || "Matte Black Lacquer", detail: t.matBlackDetail || "Deep charcoal / soft-touch", specs: { [t.specMoisture || "moisture"]: "10%", [t.specDensity || "density"]: "650 kg/m³", [t.specDurability || "durability"]: t.matBlackDur || "Scratch-Resistant Coat" }, className: "material-black" },
+  { id: "velvet", group: t.matFabric || "Fabric", name: t.matVelvetName || "Premium Velvet", detail: t.matVelvetDetail || "Parchment pile / low sheen", specs: { [t.specRub || "rubCount"]: "40,000+", [t.specComp || "comp"]: "100% Polyester", [t.specCare || "care"]: t.matVelvetCare || "Professional Dry Clean" }, className: "material-velvet" },
+  { id: "leather", group: t.matFabric || "Fabric", name: t.matLeatherName || "Genuine Leather", detail: t.matLeatherDetail || "Cognac hide / natural patina", specs: { [t.specRub || "rubCount"]: t.matLeatherRub || "Full Grain", [t.specComp || "comp"]: "100% Bovine", [t.specCare || "care"]: t.matLeatherCare || "Wax Polish Bi-Annually" }, className: "material-leather" },
+  { id: "linen", group: t.matFabric || "Fabric", name: t.matLinenName || "Linen", detail: t.matLinenDetail || "Oat weave / relaxed hand", specs: { [t.specRub || "rubCount"]: "30,000+", [t.specComp || "comp"]: "60% Linen, 40% Cotton", [t.specCare || "care"]: t.matLinenCare || "Spot Clean Only" }, className: "material-linen" },
 ];
 
-const sectionLabels: Record<string, string> = {
-  top: "The studio",
-  story: "Brand story",
-  "why-custom": "The Heaven standard",
-  collections: "Curated collections",
-  portfolio: "Featured projects",
-  journey: "The bespoke journey",
-  "materials-preview": "Material library",
-  experience: "Experience & trust",
-  contact: "Consultation",
-};
+const getSectionLabels = (t: any): Record<string, string> => ({
+  top: t.navTop || "The studio",
+  story: t.navStory,
+  "why-custom": t.navStandard,
+  collections: t.navCollections,
+  portfolio: t.navPortfolio,
+  journey: t.navJourney,
+  "materials-preview": t.navMaterials,
+  experience: t.navExperience,
+  "ar-preview": t.navAR,
+  contact: t.navContact,
+});
 
-const collections = [
-  { id: "living", number: "01", title: "Living", items: "Modular sofas · Marble-top coffee tables · Luxury TV consoles", specs: "Burma Teak / honed marble / natural boucle", image: "/assets/collection-living.jpg", gallery: ["/assets/collection-living.jpg", "/assets/living2.jpg", "/assets/living3.jpg", "/assets/living4.jpg"], imageAlt: "Heaven Furniture Mart luxury carved sofa — Living collection" },
-  { id: "bedroom", number: "02", title: "Bedroom", items: "Upholstered beds · Custom wardrobes · Vanity dressers", specs: "Linen boucle / smoked oak / aged brass", image: "/assets/collection-bedroom.jpg", gallery: ["/assets/collection-bedroom.jpg", "/assets/Bedroom2.jpg", "/assets/bed_1.jpg", "/assets/bed_2.jpg"], imageAlt: "Heaven Furniture Mart ornate carved bed — Bedroom collection" },
-  { id: "dining", number: "03", title: "Dining", items: "Solid wood tables · Handcrafted chairs · Credenzas", specs: "Burma Teak / saddle leather / Studio Brass", image: "/assets/collection-dining.jpg", gallery: ["/assets/collection-dining.jpg", "/assets/chair and table.jpg", "/assets/table_1.jpg"], imageAlt: "Heaven Furniture Mart marble top dining set — Dining collection" },
-  { id: "office", number: "04", title: "Office & Executive", items: "Bespoke desks · Library walls · Conference tables", specs: "Smoked oak / Italian marble / brushed metal", image: "/assets/collection-office.jpg", gallery: ["/assets/collection-office.jpg", "/assets/office2.jpg", "/assets/office3.jpg", "/assets/office4.jpg"], imageAlt: "Heaven Furniture Mart executive leather office chair — Office collection" },
+const getCollections = (t: any) => [
+  { id: "living", number: "01", title: t.colLiving || "Living", items: t.colLivingItems || "Modular sofas · Marble-top coffee tables · Luxury TV consoles", specs: "Burma Teak / honed marble / natural boucle", price: "৳ 1,20,000", image: "/assets/collection-living.jpg", gallery: ["/assets/collection-living.jpg", "/assets/living2.jpg", "/assets/living3.jpg", "/assets/living4.jpg"], imageAlt: "Heaven Furniture Mart luxury carved sofa — Living collection" },
+  { id: "bedroom", number: "02", title: t.colBedroom || "Bedroom", items: t.colBedroomItems || "Upholstered beds · Custom wardrobes · Vanity dressers", specs: "Linen boucle / smoked oak / aged brass", price: "৳ 1,80,000", image: "/assets/collection-bedroom.jpg", gallery: ["/assets/collection-bedroom.jpg", "/assets/Bedroom2.jpg", "/assets/bed_1.jpg", "/assets/bed_2.jpg"], imageAlt: "Heaven Furniture Mart ornate carved bed — Bedroom collection" },
+  { id: "dining", number: "03", title: t.colDining || "Dining", items: t.colDiningItems || "Solid wood tables · Handcrafted chairs · Credenzas", specs: "Burma Teak / saddle leather / Studio Brass", price: "৳ 1,50,000", image: "/assets/collection-dining.jpg", gallery: ["/assets/collection-dining.jpg", "/assets/chair and table.jpg", "/assets/table_1.jpg"], imageAlt: "Heaven Furniture Mart marble top dining set — Dining collection" },
+  { id: "office", number: "04", title: t.colOffice || "Office & Executive", items: t.colOfficeItems || "Bespoke desks · Library walls · Conference tables", specs: "Smoked oak / Italian marble / brushed metal", price: "৳ 95,000", image: "/assets/collection-office.jpg", gallery: ["/assets/collection-office.jpg", "/assets/office2.jpg", "/assets/office3.jpg", "/assets/office4.jpg"], imageAlt: "Heaven Furniture Mart executive leather office chair — Office collection" },
+  { id: "outdoor", number: "05", title: t.colOutdoor || "Outdoor", items: t.colOutdoorItems || "Teak loungers · Stone tables · Weatherproof seating", specs: "Treated Teak / woven cord / performance fabric", price: "৳ 85,000", image: "placeholder", gallery: ["placeholder"], imageAlt: "Outdoor luxury furniture" },
+  { id: "lighting", number: "06", title: t.colLighting || "Lighting & Decor", items: t.colLightingItems || "Brass pendants · Sculptural lamps · Floor mirrors", specs: "Aged brass / hand-blown glass / solid oak", price: "৳ 25,000", image: "placeholder", gallery: ["placeholder"], imageAlt: "Luxury lighting and decor" },
 ];
 
 // Framer Motion Variants
@@ -73,8 +78,14 @@ const modalVariant: Variants = {
 
 export default function Home() {
   const prefersReducedMotion = useReducedMotion();
+  const [lang, setLang] = useState<'en'|'bn'>('en');
+  const t = i18n[lang];
   const [isReady, setIsReady] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    document.documentElement.className = `lang-${lang}`;
+  }, [lang]);
   const [activeSection, setActiveSection] = useState("top");
   const [menuOpen, setMenuOpen] = useState(false);
   const [quoteOpen, setQuoteOpen] = useState(false);
@@ -82,6 +93,11 @@ export default function Home() {
   const [trustSlide, setTrustSlide] = useState(0);
   const [contactSubmitted, setContactSubmitted] = useState(() => typeof window !== "undefined" && new URLSearchParams(window.location.search).get("contact") === "preview-success");
   const [contactErrors, setContactErrors] = useState<Record<string, string>>({});
+  const [showAllCollections, setShowAllCollections] = useState(false);
+  const collections = getCollections(t);
+  const materials = getMaterials(t);
+  const sectionLabels = getSectionLabels(t);
+
   const [selectedCollection, setSelectedCollection] = useState<(typeof collections)[number] | null>(null);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [selectedMaterial, setSelectedMaterial] = useState(materials[0]);
@@ -126,7 +142,7 @@ export default function Home() {
       const progress = scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0;
       document.documentElement.style.setProperty("--scroll-progress", `${progress}%`);
 
-      const sectionIds = ["top", "story", "why-custom", "collections", "portfolio", "journey", "materials-preview", "experience", "contact"];
+      const sectionIds = ["top", "story", "why-custom", "collections", "portfolio", "journey", "materials-preview", "experience", "ar-preview", "contact"];
       const active = sectionIds.reduce((current, id) => {
         const section = document.getElementById(id);
         if (!section) return current;
@@ -286,18 +302,22 @@ export default function Home() {
             <span className="brand-name"><span>Heaven</span><small>Furniture Mart</small></span>
           </a>
           <nav className={`desktop-nav ${menuOpen ? "is-open" : ""}`} aria-label="Primary navigation">
-            <a className={activeSection === "story" ? "is-active" : ""} href="#story" onClick={handleNavClick} aria-current={activeSection === "story" ? "page" : undefined}>Story</a>
-            <a className={activeSection === "why-custom" ? "is-active" : ""} href="#why-custom" onClick={handleNavClick} aria-current={activeSection === "why-custom" ? "page" : undefined}>Standard</a>
-            <a className={activeSection === "collections" ? "is-active" : ""} href="#collections" onClick={handleNavClick} aria-current={activeSection === "collections" ? "page" : undefined}>Collections</a>
-            <a className={activeSection === "portfolio" ? "is-active" : ""} href="#portfolio" onClick={handleNavClick} aria-current={activeSection === "portfolio" ? "page" : undefined}>Portfolio</a>
-            <a className={activeSection === "journey" ? "is-active" : ""} href="#journey" onClick={handleNavClick} aria-current={activeSection === "journey" ? "page" : undefined}>Journey</a>
-            <a className={activeSection === "materials-preview" ? "is-active" : ""} href="#materials-preview" onClick={handleNavClick} aria-current={activeSection === "materials-preview" ? "page" : undefined}>Materials</a>
-            <a className={activeSection === "experience" ? "is-active" : ""} href="#experience" onClick={handleNavClick} aria-current={activeSection === "experience" ? "page" : undefined}>Experience</a>
-            <a className={activeSection === "contact" ? "is-active" : ""} href="#contact" onClick={handleNavClick} aria-current={activeSection === "contact" ? "page" : undefined}>Contact</a>
+            <a className={activeSection === "story" ? "is-active" : ""} href="#story" onClick={handleNavClick} aria-current={activeSection === "story" ? "page" : undefined}>{t.navStory}</a>
+            <a className={activeSection === "why-custom" ? "is-active" : ""} href="#why-custom" onClick={handleNavClick} aria-current={activeSection === "why-custom" ? "page" : undefined}>{t.navStandard}</a>
+            <a className={activeSection === "collections" ? "is-active" : ""} href="#collections" onClick={handleNavClick} aria-current={activeSection === "collections" ? "page" : undefined}>{t.navCollections}</a>
+            <a className={activeSection === "portfolio" ? "is-active" : ""} href="#portfolio" onClick={handleNavClick} aria-current={activeSection === "portfolio" ? "page" : undefined}>{t.navPortfolio}</a>
+            <a className={activeSection === "journey" ? "is-active" : ""} href="#journey" onClick={handleNavClick} aria-current={activeSection === "journey" ? "page" : undefined}>{t.navJourney}</a>
+            <a className={activeSection === "materials-preview" ? "is-active" : ""} href="#materials-preview" onClick={handleNavClick} aria-current={activeSection === "materials-preview" ? "page" : undefined}>{t.navMaterials}</a>
+            <a className={activeSection === "experience" ? "is-active" : ""} href="#experience" onClick={handleNavClick} aria-current={activeSection === "experience" ? "page" : undefined}>{t.navExperience}</a>
+            <a className={activeSection === "ar-preview" ? "is-active" : ""} href="#ar-preview" onClick={handleNavClick} aria-current={activeSection === "ar-preview" ? "page" : undefined}>{t.navAR}</a>
+            <a className={activeSection === "contact" ? "is-active" : ""} href="#contact" onClick={handleNavClick} aria-current={activeSection === "contact" ? "page" : undefined}>{t.navContact}</a>
           </nav>
-          <div className="mobile-section-context" aria-live="polite"><span className="mobile-section-context-line" /><span>{sectionLabels[activeSection] ?? "The studio"}</span><span className="mobile-section-context-index">{activeSection === "top" ? "00" : String(["story", "why-custom", "collections", "portfolio", "journey", "materials-preview", "experience", "contact"].indexOf(activeSection) + 1).padStart(2, "0")}</span></div>
+          <div className="mobile-section-context" aria-live="polite"><span className="mobile-section-context-line" /><span>{sectionLabels[activeSection] ?? "The studio"}</span><span className="mobile-section-context-index">{activeSection === "top" ? "00" : String(["story", "why-custom", "collections", "portfolio", "journey", "materials-preview", "experience", "ar-preview", "contact"].indexOf(activeSection) + 1).padStart(2, "0")}</span></div>
           <div className="header-actions">
-            <button className="header-quote" type="button" onClick={openQuote}>Request a quote <ArrowUpRight size={15} strokeWidth={1.7} /></button>
+            <button className="lang-toggle" type="button" onClick={() => setLang(lang === 'en' ? 'bn' : 'en')} aria-label="Toggle language">
+              <Globe size={15} /> {lang === 'en' ? 'BN' : 'EN'}
+            </button>
+            <button className="header-quote" type="button" onClick={openQuote}>{t.heroBtnQuote} <ArrowUpRight size={15} strokeWidth={1.7} /></button>
             <button className="menu-toggle" type="button" aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen} onClick={() => setMenuOpen((current) => !current)}>
               {menuOpen ? <X size={21} /> : <Menu size={21} />}
             </button>
@@ -306,16 +326,16 @@ export default function Home() {
 
         <div className="hero-content page-container">
           <div className="hero-copy-column">
-            <div className="eyebrow reveal-item reveal-one"><span className="eyebrow-rule" /><span>Custom interiors / Chattogram</span></div>
-            <h1 className="hero-title reveal-item reveal-two">Furniture,<br />crafted <em>around</em><br />you<span className="title-period">.</span></h1>
-            <p className="hero-description reveal-item reveal-three">Bespoke furniture and interior styling from Chattogram. Designed for your space, size, and taste.</p>
+            <div className="eyebrow reveal-item reveal-one"><span className="eyebrow-rule" /><span>{t.heroKicker}</span></div>
+            <h1 className="hero-title reveal-item reveal-two">{t.heroTitle1}<br />{t.heroTitle2} <em>{t.heroTitle3}</em><br />{t.heroTitle4}<span className="title-period">.</span></h1>
+            <p className="hero-description reveal-item reveal-three">{t.heroDesc}</p>
             <div className="hero-actions reveal-item reveal-four">
               <button className="magnetic-button" ref={quoteButtonRef} type="button" onClick={openQuote} onPointerMove={handleQuoteButtonMove} onPointerLeave={resetQuoteButton}>
-                <span>Request a Quote</span><span className="button-icon"><ArrowUpRight size={17} strokeWidth={1.5} /></span>
+                <span>{t.heroBtnQuote}</span><span className="button-icon"><ArrowUpRight size={17} strokeWidth={1.5} /></span>
               </button>
-              <a className="text-link" href="#story">Read our story <MoveUpRight size={15} strokeWidth={1.5} /></a>
+              <a className="text-link" href="#story">{t.heroBtnStory} <MoveUpRight size={15} strokeWidth={1.5} /></a>
             </div>
-            <div className="hero-footnote reveal-item reveal-five"><span>01</span><span className="footnote-line" /><span>Made slowly, for the long view.</span></div>
+            <div className="hero-footnote reveal-item reveal-five"><span>01</span><span className="footnote-line" /><span>{t.heroFootnote}</span></div>
           </div>
 
           <div className="hero-visual reveal-item reveal-visual" ref={stageRef} onPointerMove={handleStageMove} onPointerLeave={handleStageLeave}>
@@ -351,6 +371,13 @@ export default function Home() {
         <div className="hero-scroll page-container"><a href="#story" className="scroll-prompt"><span className="scroll-dot" /><span>Enter the studio</span></a><span className="scroll-index">Chattogram · 2026</span></div>
       </section>
 
+      <div className="marquee-container" aria-hidden="true">
+        <div className="marquee-content">
+          <span>{t.marquee}</span>
+          <span>{t.marquee}</span>
+        </div>
+      </div>
+
       <motion.section 
         className="brand-story-section" 
         id="story" 
@@ -368,15 +395,19 @@ export default function Home() {
               <span className="placeholder-label">Furniture study / 01</span><span className="placeholder-name">Made for the way you live</span>
             </div>
             {/* TODO: Replace this placeholder with a close-up of joinery, upholstery, wood grain, or a signature furniture detail. */}
-            <div className="furniture-detail-placeholder" role="img" aria-label="Placeholder for a close-up of a Heaven Furniture Mart furniture detail"><div className="detail-lines" aria-hidden="true" /><span>Detail study / 02</span></div>
-            <div className="story-visual-note">Agrabad, Chattogram <span /> Established 2020</div>
+            <div className="team-photo-container" role="img" aria-label="Heaven Furniture Mart master artisans and team">
+              <img src="/assets/team.png" alt="Heaven Furniture Mart Team" className="team-photo-img" />
+              <div className="detail-lines" aria-hidden="true" />
+              <span className="team-photo-label">{t.brandLabel}</span>
+            </div>
+            <div className="story-visual-note">{t.brandNote}</div>
           </motion.div>
 
           <div className="story-content">
-            <motion.div variants={fadeUpVariant} className="story-kicker"><span className="kicker-number">01</span><span className="kicker-line" /><span>Brand story</span></motion.div>
-            <motion.h2 variants={fadeUpVariant} className="story-title" id="brand-story-title">Furniture that<br />holds <em>your story.</em></motion.h2>
-            <motion.blockquote variants={fadeUpVariant} className="founder-quote">“At Heaven Furniture Mart, we believe furniture is more than just function; it is a reflection of lifestyle, taste, and comfort.”<cite>— Abul Kalam Bhuiyan, Managing Director</cite></motion.blockquote>
-            <motion.div variants={fadeUpVariant} className="story-narrative"><span className="story-accent-line" aria-hidden="true" /><p>Since our founding in 2020 in Agrabad, Chattogram, our philosophy has remained simple: true luxury is personal. We reject mass-produced catalog items in favor of bespoke craftsmanship, ensuring every piece is tailored to your exact dimensions, lifestyle, and aesthetic.</p></motion.div>
+            <motion.div variants={fadeUpVariant} className="story-kicker"><span className="kicker-number">01</span><span className="kicker-line" /><span>{t.brandKicker}</span></motion.div>
+            <motion.h2 variants={fadeUpVariant} className="story-title" id="brand-story-title">{t.brandTitle.split(' ')[0]} {t.brandTitle.split(' ')[1]}<br /><em>{t.brandTitle.split(' ').slice(2).join(' ')}</em></motion.h2>
+            <motion.blockquote variants={fadeUpVariant} className="founder-quote">{t.brandQuote}<cite>{t.brandQuoteAuthor}</cite></motion.blockquote>
+            <motion.div variants={fadeUpVariant} className="story-narrative"><span className="story-accent-line" aria-hidden="true" /><p>{t.brandDesc}</p></motion.div>
           </div>
         </div>
       </motion.section>
@@ -392,53 +423,53 @@ export default function Home() {
       >
         <div className="value-orbit" aria-hidden="true" />
         <motion.div variants={fadeUpVariant} className="page-container value-intro">
-          <div className="value-kicker"><span className="kicker-number">02</span><span className="kicker-line" /><span>The Heaven standard</span></div>
+          <div className="value-kicker"><span className="kicker-number">02</span><span className="kicker-line" /><span>{t.valueKicker}</span></div>
           <div className="value-heading-row">
-            <h2 id="value-title">Why <em>custom?</em></h2>
-            <p>Because the pieces that stay with us should begin with the way we live. Four quiet promises shape every Heaven project.</p>
+            <h2 id="value-title">{t.valueTitle.split(' ')[0]} <em>{t.valueTitle.split(' ').slice(1).join(' ')}</em></h2>
+            <p>{t.valueDesc}</p>
           </div>
         </motion.div>
         <div className="page-container value-matrix">
           <motion.article variants={fadeUpVariant} className="value-card">
             <div className="value-swatch swatch-oak" role="img" aria-label="Placeholder for a natural wood furniture detail"><span>SWATCH / 01</span></div>
             <div className="value-card-index">01</div>
-            <h3>Fully Bespoke</h3>
-            <p>Made to your exact dimensions and aesthetic preferences. Your home, your rules, not mass-produced.</p>
+            <h3>{t.value1Title}</h3>
+            <p>{t.value1Desc}</p>
             <span className="card-arrow"><ArrowUpRight size={16} strokeWidth={1.5} /></span>
           </motion.article>
           <motion.article variants={fadeUpVariant} className="value-card">
             <div className="value-swatch swatch-brass" role="img" aria-label="Placeholder for a brass and joinery furniture detail"><span>SWATCH / 02</span></div>
             <div className="value-card-index">02</div>
-            <h3>In-House Artisanship</h3>
-            <p>Premium woods, metals, and fabrics crafted by skilled artisans in our own workshop.</p>
+            <h3>{t.value2Title}</h3>
+            <p>{t.value2Desc}</p>
             <span className="card-arrow"><ArrowUpRight size={16} strokeWidth={1.5} /></span>
           </motion.article>
           <motion.article variants={fadeUpVariant} className="value-card">
             <div className="value-swatch swatch-studio" role="img" aria-label="Placeholder for the Agrabad Experience Studio"><span>SWATCH / 03</span></div>
             <div className="value-card-index">03</div>
-            <h3>Agrabad Studio</h3>
-            <p>Visit our large physical showroom in Chattogram to touch, feel, and select your materials in person.</p>
+            <h3>{t.value3Title}</h3>
+            <p>{t.value3Desc}</p>
             <span className="card-arrow"><ArrowUpRight size={16} strokeWidth={1.5} /></span>
           </motion.article>
           <motion.article variants={fadeUpVariant} className="value-card">
             <div className="value-swatch swatch-boucle" role="img" aria-label="Placeholder for design consultation"><span>SWATCH / 04</span></div>
             <div className="value-card-index">04</div>
-            <h3>Free Consultation</h3>
-            <p>Work directly with our interior designers to map out your space and select the perfect pieces.</p>
+            <h3>{t.value4Title}</h3>
+            <p>{t.value4Desc}</p>
             <span className="card-arrow"><ArrowUpRight size={16} strokeWidth={1.5} /></span>
           </motion.article>
           <motion.article variants={fadeUpVariant} className="value-card">
             <div className="value-swatch swatch-oak" style={{ filter: "hue-rotate(45deg)" }} role="img" aria-label="Placeholder for turnkey service"><span>SWATCH / 05</span></div>
             <div className="value-card-index">05</div>
-            <h3>Turnkey Service</h3>
-            <p>From the first sketch to white-glove delivery and professional installation, everything is included.</p>
+            <h3>{t.value5Title}</h3>
+            <p>{t.value5Desc}</p>
             <span className="card-arrow"><ArrowUpRight size={16} strokeWidth={1.5} /></span>
           </motion.article>
           <motion.article variants={fadeUpVariant} className="value-card">
             <div className="value-swatch swatch-brass" style={{ filter: "hue-rotate(90deg)" }} role="img" aria-label="Placeholder for flexible payments"><span>SWATCH / 06</span></div>
             <div className="value-card-index">06</div>
-            <h3>Easy Payments</h3>
-            <p>Flexible and secure payment options designed to make your luxury commission stress-free.</p>
+            <h3>{t.value6Title}</h3>
+            <p>{t.value6Desc}</p>
             <span className="card-arrow"><ArrowUpRight size={16} strokeWidth={1.5} /></span>
           </motion.article>
         </div>
@@ -454,14 +485,14 @@ export default function Home() {
         variants={staggerContainer}
       >
         <motion.div variants={fadeUpVariant} className="page-container collections-heading">
-          <div className="collections-kicker"><span className="kicker-number">03</span><span className="kicker-line" /><span>Curated collections</span></div>
+          <div className="collections-kicker"><span className="kicker-number">03</span><span className="kicker-line" /><span>{t.collectionKicker}</span></div>
           <div className="collections-heading-row">
-            <h2 id="collections-title">Curated for<br /><em>your space.</em></h2>
-            <p>A considered edit of the pieces we return to — shaped by proportion, material, and the feeling of coming home.</p>
+            <h2 id="collections-title">{t.collectionTitle.split(' ')[0]} {t.collectionTitle.split(' ')[1]}<br /><em>{t.collectionTitle.split(' ').slice(2).join(' ')}</em></h2>
+            <p>{t.collectionDesc}</p>
           </div>
         </motion.div>
         <div className="collections-scroller page-container" aria-label="Curated furniture collections">
-          {collections.map((collection) => (
+          {(showAllCollections ? collections : collections.slice(0, 4)).map((collection) => (
             <motion.button variants={fadeUpVariant} className="collection-card" type="button" key={collection.id} onClick={() => { setSelectedCollection(collection); setLightboxIndex(0); }} aria-label={`Explore ${collection.title} collection`}>
               <span className={`collection-image ${collection.image === "placeholder" ? `collection-placeholder placeholder-${collection.id}` : ""}`}>
                 {collection.image === "placeholder" ? (
@@ -471,11 +502,24 @@ export default function Home() {
                 ) : <img src={collection.image} alt={collection.imageAlt} />}
                 <span className="collection-overlay"><span>Explore category</span><ArrowUpRight size={16} strokeWidth={1.4} /></span>
               </span>
-              <span className="collection-meta"><span className="collection-number">{collection.number}</span><span className="collection-title">{collection.title}</span></span>
+              <span className="collection-meta">
+                <span className="collection-title-row">
+                  <span className="collection-number">{collection.number}</span>
+                  <span className="collection-title">{collection.title}</span>
+                </span>
+                <span className="collection-price">Starts at {collection.price}</span>
+              </span>
               <span className="collection-items">{collection.items}</span>
             </motion.button>
           ))}
         </div>
+        {!showAllCollections && (
+          <motion.div variants={fadeUpVariant} className="page-container see-all-container" style={{ display: 'flex', justifyContent: 'center', marginTop: '40px' }}>
+            <button className="magnetic-button" style={{ background: 'var(--brass)', color: 'var(--teal-900)' }} type="button" onClick={() => setShowAllCollections(true)}>
+              <span>{t.btnSeeAll}</span>
+            </button>
+          </motion.div>
+        )}
       </motion.section>
 
       <motion.section 
@@ -488,32 +532,32 @@ export default function Home() {
         variants={staggerContainer}
       >
         <motion.div variants={fadeUpVariant} className="page-container portfolio-heading">
-          <div className="portfolio-kicker"><span className="kicker-number">04</span><span className="kicker-line" /><span>Featured projects</span></div>
+          <div className="portfolio-kicker"><span className="kicker-number">04</span><span className="kicker-line" /><span>{t.portfolioKicker}</span></div>
           <div className="portfolio-heading-row">
-            <h2 id="portfolio-title">Spaces transformed<br /><em>by design.</em></h2>
-            <p>A selection of custom interiors tailored to the specific dimensions and aesthetics of our clients.</p>
+            <h2 id="portfolio-title">{t.portfolioTitle.split(' ')[0]} {t.portfolioTitle.split(' ')[1]}<br /><em>{t.portfolioTitle.split(' ').slice(2).join(' ')}</em></h2>
+            <p>{t.portfolioDesc}</p>
           </div>
         </motion.div>
         <div className="portfolio-scroller page-container">
           <motion.div variants={fadeUpVariant} className="portfolio-card">
             <div className="portfolio-image-wrapper"><img src="/assets/portfolio_gulshan.png" alt="The Gulshan Residence" /></div>
             <div className="portfolio-meta">
-              <h3>The Gulshan Residence</h3>
-              <p>Complete living space tailored with Burma Teak and deep charcoal accents.</p>
+              <h3>{t.portfolio1Title}</h3>
+              <p>{t.portfolio1Desc}</p>
             </div>
           </motion.div>
           <motion.div variants={fadeUpVariant} className="portfolio-card">
             <div className="portfolio-image-wrapper"><img src="/assets/portfolio_agrabad.png" alt="Agrabad Executive Suite" /></div>
             <div className="portfolio-meta">
-              <h3>Agrabad Executive Suite</h3>
-              <p>Bespoke bookshelves and leather seating for a high-end study.</p>
+              <h3>{t.portfolio2Title}</h3>
+              <p>{t.portfolio2Desc}</p>
             </div>
           </motion.div>
           <motion.div variants={fadeUpVariant} className="portfolio-card">
             <div className="portfolio-image-wrapper"><img src="/assets/portfolio_banani.png" alt="Banani Penthouse" /></div>
             <div className="portfolio-meta">
-              <h3>Banani Penthouse</h3>
-              <p>A curated dining room featuring a solid wood statement table.</p>
+              <h3>{t.portfolio3Title}</h3>
+              <p>{t.portfolio3Desc}</p>
             </div>
           </motion.div>
         </div>
@@ -530,15 +574,15 @@ export default function Home() {
       >
         <div className="journey-blueprint" aria-hidden="true" />
         <motion.div variants={fadeUpVariant} className="page-container journey-heading">
-          <div className="journey-kicker"><span className="kicker-number">05</span><span className="kicker-line" /><span>How we build your vision</span></div>
-          <div className="journey-heading-row"><h2 id="journey-title">The bespoke<br /><em>journey.</em></h2><p>From the first idea to the final placement, every project moves with intention. Here is how a room becomes unmistakably yours.</p></div>
+          <div className="journey-kicker"><span className="kicker-number">05</span><span className="kicker-line" /><span>{t.journeyKicker}</span></div>
+          <div className="journey-heading-row"><h2 id="journey-title">{t.journeyTitle.split(' ')[0]}<br /><em>{t.journeyTitle.split(' ').slice(1).join(' ')}</em></h2><p>{t.journeyDesc}</p></div>
         </motion.div>
         <div className="page-container journey-timeline">
           <div className="journey-line" aria-hidden="true" />
-          <motion.article variants={fadeUpVariant} className="journey-step"><div className="journey-marker"><span>01</span></div><div className="journey-icon icon-consultation" aria-hidden="true"><i /><i /></div><div className="journey-copy"><span className="journey-step-label">First, we listen</span><h3>Consultation</h3><p>Share your vision, dimensions, and floor plans with our design experts.</p></div><div className="journey-number" aria-hidden="true">01</div></motion.article>
-          <motion.article variants={fadeUpVariant} className="journey-step"><div className="journey-marker"><span>02</span></div><div className="journey-icon icon-materials" aria-hidden="true"><i /><i /><i /></div><div className="journey-copy"><span className="journey-step-label">Then, we compose</span><h3>3D Design &amp; Materials</h3><p>Select your premium wood finishes, fabrics, and metal hardware from our extensive library.</p></div><div className="journey-number" aria-hidden="true">02</div></motion.article>
-          <motion.article variants={fadeUpVariant} className="journey-step"><div className="journey-marker"><span>03</span></div><div className="journey-icon icon-crafting" aria-hidden="true"><i /><i /></div><div className="journey-copy"><span className="journey-step-label">Made in Chattogram</span><h3>Precision Crafting</h3><p>Your piece is custom-built by our in-house master artisans right here in Chattogram.</p></div><div className="journey-number" aria-hidden="true">03</div></motion.article>
-          <motion.article variants={fadeUpVariant} className="journey-step"><div className="journey-marker"><span>04</span></div><div className="journey-icon icon-installation" aria-hidden="true"><i /><i /><i /></div><div className="journey-copy"><span className="journey-step-label">Finally, we place it</span><h3>White-Glove Installation</h3><p>Delivered securely and installed perfectly in your home by our professional team.</p></div><div className="journey-number" aria-hidden="true">04</div></motion.article>
+          <motion.article variants={fadeUpVariant} className="journey-step"><div className="journey-marker"><span>01</span></div><div className="journey-icon icon-consultation" aria-hidden="true"><i /><i /></div><div className="journey-copy"><span className="journey-step-label">{t.step1Label}</span><h3>{t.step1Title}</h3><p>{t.step1Desc}</p></div><div className="journey-number" aria-hidden="true">01</div></motion.article>
+          <motion.article variants={fadeUpVariant} className="journey-step"><div className="journey-marker"><span>02</span></div><div className="journey-icon icon-materials" aria-hidden="true"><i /><i /><i /></div><div className="journey-copy"><span className="journey-step-label">{t.step2Label}</span><h3>{t.step2Title}</h3><p>{t.step2Desc}</p></div><div className="journey-number" aria-hidden="true">02</div></motion.article>
+          <motion.article variants={fadeUpVariant} className="journey-step"><div className="journey-marker"><span>03</span></div><div className="journey-icon icon-crafting" aria-hidden="true"><i /><i /></div><div className="journey-copy"><span className="journey-step-label">{t.step3Label}</span><h3>{t.step3Title}</h3><p>{t.step3Desc}</p></div><div className="journey-number" aria-hidden="true">03</div></motion.article>
+          <motion.article variants={fadeUpVariant} className="journey-step"><div className="journey-marker"><span>04</span></div><div className="journey-icon icon-installation" aria-hidden="true"><i /><i /><i /></div><div className="journey-copy"><span className="journey-step-label">{t.step4Label}</span><h3>{t.step4Title}</h3><p>{t.step4Desc}</p></div><div className="journey-number" aria-hidden="true">04</div></motion.article>
         </div>
       </motion.section>
 
@@ -572,15 +616,15 @@ export default function Home() {
             </div>
           </motion.div>
           <div className="material-preview-controls">
-            <motion.div variants={fadeUpVariant} className="material-preview-kicker"><span className="kicker-number">06</span><span className="kicker-line" /><span>Material library</span></motion.div>
-            <motion.h2 variants={fadeUpVariant} id="materials-preview-title">Crafted with<br /><em>uncompromising quality.</em></motion.h2>
-            <motion.p variants={fadeUpVariant}>Choose from over 50+ premium upholstery and wood finish options.</motion.p>
+            <motion.div variants={fadeUpVariant} className="material-preview-kicker"><span className="kicker-number">06</span><span className="kicker-line" /><span>{t.materialKicker}</span></motion.div>
+            <motion.h2 variants={fadeUpVariant} id="materials-preview-title">{t.materialTitle.split(' ')[0]}<br /><em>{t.materialTitle.split(' ').slice(1).join(' ')}</em></motion.h2>
+            <motion.p variants={fadeUpVariant}>{t.materialDesc}</motion.p>
             <motion.div variants={fadeUpVariant} className="material-groups">
               {["Wood", "Fabric"].map((group) => (
                 <div className="material-group" key={group}>
-                  <div className="material-group-label"><span>{group}</span><span>{group === "Wood" ? "04 finishes" : "03 finishes"}</span></div>
+                  <div className="material-group-label"><span>{lang === 'bn' ? (group === 'Wood' ? 'কাঠ' : 'ফেব্রিক') : group}</span><span>{group === "Wood" ? (lang === 'bn' ? "০৪ ফিনিশ" : "04 finishes") : (lang === 'bn' ? "০৩ ফিনিশ" : "03 finishes")}</span></div>
                   <div className="material-swatches" role="radiogroup" aria-label={`${group} materials`}>
-                    {materials.filter((material) => material.group === group).map((material) => (
+                    {materials.filter((material) => (lang === 'bn' ? material.group === (group === 'Wood' ? 'কাঠ' : 'ফেব্রিক') : material.group === group)).map((material) => (
                       <button className={`material-swatch ${material.className} ${selectedMaterial.id === material.id ? "is-active" : ""}`} key={material.id} type="button" role="radio" aria-checked={selectedMaterial.id === material.id} aria-label={material.name} data-tooltip={material.name} onClick={() => selectMaterial(material)}>
                         {selectedMaterial.id === material.id && (
                           <motion.span layoutId="active-material" className="active-swatch-dot" transition={{ type: "spring", stiffness: 300, damping: 30 }} />
@@ -592,7 +636,7 @@ export default function Home() {
                 </div>
               ))}
             </motion.div>
-            <motion.div variants={fadeUpVariant} className="selected-material"><span>Selected finish</span><strong>{selectedMaterial.name}</strong><small>{selectedMaterial.detail}</small></motion.div>
+            <motion.div variants={fadeUpVariant} className="selected-material"><span>{t.materialSelected}</span><strong>{selectedMaterial.name}</strong><small>{selectedMaterial.detail}</small></motion.div>
           </div>
         </div>
       </motion.section>
@@ -608,9 +652,9 @@ export default function Home() {
       >
         <div className="page-container estimator-grid">
           <div className="estimator-content">
-            <motion.div variants={fadeUpVariant} className="estimator-kicker"><span className="kicker-number">07</span><span className="kicker-line" /><span>Commission Blueprint</span></motion.div>
-            <motion.h2 variants={fadeUpVariant} id="estimator-title">Calculate your<br /><em>investment.</em></motion.h2>
-            <motion.p variants={fadeUpVariant}>Get an instant baseline estimate for your bespoke furniture suite, tailored to your room scale and material choices.</motion.p>
+            <motion.div variants={fadeUpVariant} className="estimator-kicker"><span className="kicker-number">07</span><span className="kicker-line" /><span>{t.estimatorKicker}</span></motion.div>
+            <motion.h2 variants={fadeUpVariant} id="estimator-title">{t.estimatorTitle.split(' ')[0]}<br /><em>{t.estimatorTitle.split(' ').slice(1).join(' ')}</em></motion.h2>
+            <motion.p variants={fadeUpVariant}>{t.estimatorDesc}</motion.p>
             
             <motion.div variants={fadeUpVariant} className="estimator-controls">
               <div className="estimator-group">
@@ -640,25 +684,28 @@ export default function Home() {
             </motion.div>
           </div>
           
-          <motion.div variants={fadeVariant} className="estimator-receipt">
-            <div className="receipt-header">
-              <span>HEAVEN STUDIO</span>
-              <span>ESTIMATE</span>
-            </div>
-            <div className="receipt-body">
-              <div className="receipt-row"><span>Suite</span><span>{estRoom}</span></div>
-              <div className="receipt-row"><span>Material</span><span>{estMaterial}</span></div>
-              <div className="receipt-row"><span>Scale</span><span>{estScale === 1 ? "Intimate" : estScale === 2 ? "Standard" : "Grand"}</span></div>
-              <div className="receipt-divider" />
-              <div className="receipt-total">
-                <span>Estimated Investment</span>
-                <strong>৳ {getEstimate()}</strong>
+          <motion.div variants={fadeVariant} className="estimator-receipt" style={{ backgroundImage: `url('/assets/collection-${estRoom.toLowerCase()}.jpg')`, backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative', overflow: 'hidden' }}>
+            <div className="receipt-overlay" style={{ position: 'absolute', inset: 0, background: 'rgba(23, 35, 31, 0.75)', backdropFilter: 'blur(8px)', borderRadius: '4px' }} />
+            <div style={{ position: 'relative', zIndex: 1, width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+              <div className="receipt-header">
+                <span>HEAVEN STUDIO</span>
+                <span>ESTIMATE</span>
               </div>
-              <p className="receipt-note">*Final cost depends on exact dimensions, fabric tiers, and custom modifications.</p>
+              <div className="receipt-body">
+                <div className="receipt-row"><span>Suite</span><span>{estRoom}</span></div>
+                <div className="receipt-row"><span>Material</span><span>{estMaterial}</span></div>
+                <div className="receipt-row"><span>Scale</span><span>{estScale === 1 ? "Intimate" : estScale === 2 ? "Standard" : "Grand"}</span></div>
+                <div className="receipt-divider" />
+                <div className="receipt-total">
+                  <span>{t.estTotal}</span>
+                  <strong>৳ {getEstimate()}</strong>
+                </div>
+                <p className="receipt-note">*Final cost depends on exact dimensions, fabric tiers, and custom modifications.</p>
+              </div>
+              <a className="receipt-export" href={`${getWhatsAppLink()}&text=Hello! I just used the Commission Blueprint on your website. I am interested in a ${estRoom} suite made of ${estMaterial} for a ${estScale === 1 ? "Intimate" : estScale === 2 ? "Standard" : "Grand"} room. The estimate was ৳${getEstimate()}. Can we discuss further?`} target="_blank" rel="noreferrer">
+                {t.estExport} <ArrowUpRight size={16} />
+              </a>
             </div>
-            <a className="receipt-export" href={`${getWhatsAppLink()}&text=Hello! I just used the Commission Blueprint on your website. I am interested in a ${estRoom} suite made of ${estMaterial} for a ${estScale === 1 ? "Intimate" : estScale === 2 ? "Standard" : "Grand"} room. The estimate was ৳${getEstimate()}. Can we discuss further?`} target="_blank" rel="noreferrer">
-              Export to WhatsApp <ArrowUpRight size={16} />
-            </a>
           </motion.div>
         </div>
       </motion.section>
@@ -674,24 +721,30 @@ export default function Home() {
       >
         <div className="experience-grain" aria-hidden="true" />
         <motion.div variants={fadeUpVariant} className="page-container experience-head">
-          <div className="experience-kicker"><span className="kicker-number">07</span><span className="kicker-line" /><span>Experience &amp; trust</span></div>
-          <div className="experience-heading-row"><h2 id="experience-title">Come closer.<br /><em>See the difference.</em></h2><p>A physical studio, a considered process, and a reputation built one carefully finished piece at a time.</p></div>
+          <div className="experience-kicker"><span className="kicker-number">07</span><span className="kicker-line" /><span>{t.navExperience}</span></div>
+          <div className="experience-heading-row"><h2 id="experience-title">{t.experienceTitle.split(' ')[0]} {t.experienceTitle.split(' ')[1]}<br /><em>{t.experienceTitle.split(' ').slice(2).join(' ')}</em></h2><p>{t.experienceDesc}</p></div>
         </motion.div>
         <motion.div variants={fadeUpVariant} className="page-container showroom-panel">
           <div className="showroom-film">
             <div className="showroom-poster" style={{ backgroundImage: `url(${heroRoom})` }} role="img" aria-label="Placeholder poster for the Agrabad Experience Studio video"><div className="showroom-wash" /><div className="showroom-film-label"><span>Showroom film / coming soon</span><strong>Agrabad Experience Studio</strong></div><div className="showroom-play"><Play size={17} fill="currentColor" strokeWidth={1.2} /></div></div>
             <div className="showroom-caption"><span>Textures in person. Joinery under your hand.</span><span>Heaven / 006</span></div>
           </div>
-          <div className="showroom-copy"><span className="showroom-eyebrow">Visit the studio</span><h3>Visit the Agrabad<br /><em>Experience Studio.</em></h3><p>Walk into our 5,000+ sq. ft. studio to feel the textures, inspect the joinery, and sit with our interior design consultants.</p><a className="directions-button" href="https://www.google.com/maps/search/?api=1&query=Agrabad%20Chattogram" target="_blank" rel="noreferrer"><MapPin size={15} strokeWidth={1.4} />Get showroom directions <ArrowUpRight size={14} strokeWidth={1.4} /></a></div>
+          <div className="showroom-copy"><span className="showroom-eyebrow">{t.experienceKicker}</span><h3>{t.experienceTitle.split(' ').slice(0, -2).join(' ')}<br /><em>{t.experienceTitle.split(' ').slice(-2).join(' ')}</em></h3><p>{t.experienceDesc}</p><a className="directions-button" href="https://www.google.com/maps/search/?api=1&query=Agrabad%20Chattogram" target="_blank" rel="noreferrer"><MapPin size={15} strokeWidth={1.4} />{t.experienceBtn} <ArrowUpRight size={14} strokeWidth={1.4} /></a></div>
         </motion.div>
         <motion.div variants={fadeUpVariant} className="page-container credibility-timeline">
-          <div className="credibility-intro"><span className="showroom-eyebrow">A measured history</span><h3>Built over<br /><em>time.</em></h3></div>
+          <div className="credibility-intro">
+            <div><span className="showroom-eyebrow">{t.credibilityKicker}</span><h3>{t.credibilityTitle.split(' ')[0]}<br /><em>{t.credibilityTitle.split(' ').slice(1).join(' ')}</em></h3></div>
+            <div className="award-badge-container">
+              <img src="/assets/award.png" alt="National Honor Award" className="award-badge-img" />
+              <span>{t.credibilityAward}</span>
+            </div>
+          </div>
           <div className="timeline-track" aria-label="Heaven Furniture Mart milestone timeline">
             <div className="timeline-line" aria-hidden="true" />
-            <div className="timeline-node"><span>2020</span><i /><strong>Genesis</strong><p>Agrabad, Chattogram</p></div>
-            <div className="timeline-node"><span>2022</span><i /><strong>Expansion</strong><p>Experience Studio</p></div>
-            <div className="timeline-node"><span>2025</span><i /><strong>Prestige</strong><p>CCCI Chamber Member</p></div>
-            <div className="timeline-node timeline-highlight"><span>2026</span><i /><strong>National Honor</strong><p>BFIOA Award Recognition</p></div>
+            <div className="timeline-node"><span>2020</span><i /><strong>{t.timeline1Title}</strong><p>{t.timeline1Desc}</p></div>
+            <div className="timeline-node"><span>2022</span><i /><strong>{t.timeline2Title}</strong><p>{t.timeline2Desc}</p></div>
+            <div className="timeline-node"><span>2025</span><i /><strong>{t.timeline3Title}</strong><p>{t.timeline3Desc}</p></div>
+            <div className="timeline-node timeline-highlight"><span>2026</span><i /><strong>{t.timeline4Title}</strong><p>{t.timeline4Desc}</p></div>
           </div>
         </motion.div>
         <motion.div variants={fadeUpVariant} className="page-container trust-panel">
@@ -707,8 +760,10 @@ export default function Home() {
         </motion.div>
       </motion.section>
 
-      <motion.section 
-        className="contact-section" 
+      <RoomARPreview t={t as unknown as Record<string, string>} prefersReducedMotion={prefersReducedMotion} />
+
+      <motion.section
+        className="contact-section"
         id="contact" 
         aria-labelledby="contact-title"
         initial={prefersReducedMotion ? "show" : "hidden"}
@@ -718,15 +773,15 @@ export default function Home() {
       >
         <div className="contact-arc" aria-hidden="true" />
         <div className="page-container contact-main">
-          <motion.div variants={fadeUpVariant} className="contact-intro"><div className="contact-kicker"><span className="kicker-number">08</span><span className="kicker-line" /><span>Begin with a conversation</span></div><h2 id="contact-title">Let’s build<br /><em>your space.</em></h2><p>Request a complimentary design consultation or reach out to us directly.</p></motion.div>
+          <motion.div variants={fadeUpVariant} className="contact-intro"><div className="contact-kicker"><span className="kicker-number">09</span><span className="kicker-line" /><span>{t.contactKicker}</span></div><h2 id="contact-title">{t.contactTitle.split(' ')[0]} {t.contactTitle.split(' ')[1]}<br /><em>{t.contactTitle.split(' ').slice(2).join(' ')}</em></h2><p>{t.contactDesc}</p></motion.div>
           <motion.div variants={fadeUpVariant} className="contact-form-shell">
-            {contactSubmitted ? <div className="contact-success"><span className="success-mark"><Check size={17} strokeWidth={1.5} /></span><span className="contact-eyebrow">Brief prepared</span><h3>Your brief is ready<br /><em>for the studio.</em></h3><p>This preview form is not connected to storage or email yet. For an immediate response, use the WhatsApp link below.</p><button type="button" className="contact-reset" onClick={() => { setContactSubmitted(false); setContactErrors({}); }}>Edit request <ArrowUpRight size={14} /></button></div> : <form onSubmit={handleContactSubmit} className="consultation-form" noValidate><label className={contactErrors.name ? "has-error" : ""}><span>Full name</span><input name="name" type="text" placeholder="Your name" aria-invalid={Boolean(contactErrors.name)} aria-describedby={contactErrors.name ? "contact-name-error" : undefined} onChange={() => handleContactFieldChange("name")} />{contactErrors.name && <small id="contact-name-error" className="field-error">{contactErrors.name}</small>}</label><label className={contactErrors.phone ? "has-error" : ""}><span>Phone / WhatsApp</span><input name="phone" type="tel" placeholder="+880 1xxx-xxxxxx" aria-invalid={Boolean(contactErrors.phone)} aria-describedby={contactErrors.phone ? "contact-phone-error" : undefined} onChange={() => handleContactFieldChange("phone")} />{contactErrors.phone && <small id="contact-phone-error" className="field-error">{contactErrors.phone}</small>}</label><label className={contactErrors.service ? "has-error" : ""}><span>Service interest</span><select name="service" defaultValue="" aria-invalid={Boolean(contactErrors.service)} aria-describedby={contactErrors.service ? "contact-service-error" : undefined} onChange={() => handleContactFieldChange("service")}><option value="" disabled>Select a service</option><option>Living Room</option><option>Full House</option><option>Custom Piece</option></select>{contactErrors.service && <small id="contact-service-error" className="field-error">{contactErrors.service}</small>}</label><button className="consultation-submit" type="submit">Request consultation <ArrowUpRight size={16} strokeWidth={1.4} /></button></form>}
+            {contactSubmitted ? <div className="contact-success"><span className="success-mark"><Check size={17} strokeWidth={1.5} /></span><span className="contact-eyebrow">Brief prepared</span><h3>Your brief is ready<br /><em>for the studio.</em></h3><p>{t.contactSuccess}</p><button type="button" className="contact-reset" onClick={() => { setContactSubmitted(false); setContactErrors({}); }}>Edit request <ArrowUpRight size={14} /></button></div> : <form onSubmit={handleContactSubmit} className="consultation-form" noValidate><label className={contactErrors.name ? "has-error" : ""}><span>{t.contactName}</span><input name="name" type="text" placeholder={t.contactName} aria-invalid={Boolean(contactErrors.name)} aria-describedby={contactErrors.name ? "contact-name-error" : undefined} onChange={() => handleContactFieldChange("name")} />{contactErrors.name && <small id="contact-name-error" className="field-error">{contactErrors.name}</small>}</label><label className={contactErrors.phone ? "has-error" : ""}><span>{t.contactPhone}</span><input name="phone" type="tel" placeholder="+880 1xxx-xxxxxx" aria-invalid={Boolean(contactErrors.phone)} aria-describedby={contactErrors.phone ? "contact-phone-error" : undefined} onChange={() => handleContactFieldChange("phone")} />{contactErrors.phone && <small id="contact-phone-error" className="field-error">{contactErrors.phone}</small>}</label><label className={contactErrors.service ? "has-error" : ""}><span>{t.contactService}</span><select name="service" defaultValue="" aria-invalid={Boolean(contactErrors.service)} aria-describedby={contactErrors.service ? "contact-service-error" : undefined} onChange={() => handleContactFieldChange("service")}><option value="" disabled>{t.contactServiceOptions[0]}</option><option>{t.contactServiceOptions[1]}</option><option>{t.contactServiceOptions[2]}</option><option>{t.contactServiceOptions[3]}</option><option>{t.contactServiceOptions[4]}</option></select>{contactErrors.service && <small id="contact-service-error" className="field-error">{contactErrors.service}</small>}</label><button className="consultation-submit" type="submit">{t.contactBtn} <ArrowUpRight size={16} strokeWidth={1.4} /></button></form>}
             <a className="whatsapp-line" href={getWhatsAppLink()} target="_blank" rel="noreferrer"><MessageCircle size={16} strokeWidth={1.5} /><span>Prefer instant answers? <strong>Chat directly on WhatsApp</strong> <small>(+880 1960-481983)</small></span><ArrowUpRight size={14} strokeWidth={1.4} /></a>
           </motion.div>
         </div>
         <footer className="page-container contact-footer">
           <div className="footer-brand"><a className="brand-lockup" href="#top" aria-label="Heaven Furniture Mart home"><img className="brand-mark" src={archMark} alt="" /><span className="brand-name"><span>Heaven</span><small>Furniture Mart</small></span></a><p>Heaven Furniture Mart © 2026.<br />Designed. Crafted. Customized.</p></div>
-          <div className="footer-location"><span className="footer-label">Visit the studio</span><p>Agrabad Access Road,<br />Chattogram, Bangladesh.<br /><small>Sat – Thu: 10:00 AM – 8:00 PM</small></p></div>
+          <div className="footer-location"><span className="footer-label">{t.experienceBtn.split(' ')[0]} {t.experienceBtn.split(' ')[1]}</span><p>Agrabad Access Road,<br />Chattogram, Bangladesh.<br /><small>Sat – Thu: 10:00 AM – 8:00 PM</small></p></div>
           <div className="footer-contact"><span className="footer-label">Stay in touch</span><a href="mailto:heavenfurnituremart@gmail.com"><Mail size={14} strokeWidth={1.4} />heavenfurnituremart@gmail.com</a><a href="tel:+8801960481983"><Phone size={14} strokeWidth={1.4} />+880 1960-481983</a><div className="social-links"><a href="#social-facebook" onClick={handleSocialPlaceholder} aria-label="Facebook profile placeholder"><Facebook size={16} /></a><a href="#social-instagram" onClick={handleSocialPlaceholder} aria-label="Instagram profile placeholder"><Instagram size={16} /></a><a href="#social-youtube" onClick={handleSocialPlaceholder} aria-label="YouTube profile placeholder"><Youtube size={16} /></a></div></div>
         </footer>
         <a className="mobile-whatsapp" href={getWhatsAppLink()} target="_blank" rel="noreferrer"><MessageCircle size={17} strokeWidth={1.6} />WhatsApp the studio</a>
