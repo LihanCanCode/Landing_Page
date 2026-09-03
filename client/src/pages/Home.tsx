@@ -13,13 +13,13 @@ const heroRoom = "/assets/hero_luxury_showroom.png";
 const archMark = "/assets/heaven-arch-mark.svg";
 
 const materials = [
-  { id: "teak", group: "Wood", name: "Burma Teak", detail: "Warm honey grain / hand-finished", className: "material-teak" },
-  { id: "walnut", group: "Wood", name: "Walnut", detail: "Smoked umber grain / satin oil", className: "material-walnut" },
-  { id: "sheesham", group: "Wood", name: "Sheesham", detail: "Toasted rose grain / waxed", className: "material-sheesham" },
-  { id: "black", group: "Wood", name: "Matte Black Lacquer", detail: "Deep charcoal / soft-touch", className: "material-black" },
-  { id: "velvet", group: "Fabric", name: "Premium Velvet", detail: "Parchment pile / low sheen", className: "material-velvet" },
-  { id: "leather", group: "Fabric", name: "Genuine Leather", detail: "Cognac hide / natural patina", className: "material-leather" },
-  { id: "linen", group: "Fabric", name: "Linen", detail: "Oat weave / relaxed hand", className: "material-linen" },
+  { id: "teak", group: "Wood", name: "Burma Teak", detail: "Warm honey grain / hand-finished", specs: { moisture: "10% Kiln-Dried", density: "680 kg/m³", durability: "High Termite Resistance" }, className: "material-teak" },
+  { id: "walnut", group: "Wood", name: "Walnut", detail: "Smoked umber grain / satin oil", specs: { moisture: "12% Kiln-Dried", density: "610 kg/m³", durability: "Medium Resistance" }, className: "material-walnut" },
+  { id: "sheesham", group: "Wood", name: "Sheesham", detail: "Toasted rose grain / waxed", specs: { moisture: "8% Kiln-Dried", density: "770 kg/m³", durability: "Ultra High Durability" }, className: "material-sheesham" },
+  { id: "black", group: "Wood", name: "Matte Black Lacquer", detail: "Deep charcoal / soft-touch", specs: { moisture: "10% Kiln-Dried", density: "650 kg/m³", durability: "Scratch-Resistant Coat" }, className: "material-black" },
+  { id: "velvet", group: "Fabric", name: "Premium Velvet", detail: "Parchment pile / low sheen", specs: { rubCount: "40,000+ Martindale", comp: "100% Polyester", care: "Professional Dry Clean" }, className: "material-velvet" },
+  { id: "leather", group: "Fabric", name: "Genuine Leather", detail: "Cognac hide / natural patina", specs: { rubCount: "Full Grain Hide", comp: "100% Bovine Leather", care: "Wax Polish Bi-Annually" }, className: "material-leather" },
+  { id: "linen", group: "Fabric", name: "Linen", detail: "Oat weave / relaxed hand", specs: { rubCount: "30,000+ Martindale", comp: "60% Linen, 40% Cotton", care: "Spot Clean Only" }, className: "material-linen" },
 ];
 
 const sectionLabels: Record<string, string> = {
@@ -87,16 +87,37 @@ export default function Home() {
   const [selectedMaterial, setSelectedMaterial] = useState(materials[0]);
   const [previousMaterial, setPreviousMaterial] = useState(materials[0]);
   const [isMaterialChanging, setIsMaterialChanging] = useState(false);
+  const [estRoom, setEstRoom] = useState("Living");
+  const [estMaterial, setEstMaterial] = useState("Teak");
+  const [estScale, setEstScale] = useState(2);
+  const [isNightMode, setIsNightMode] = useState(false);
+  const [isXrayMode, setIsXrayMode] = useState(false);
+  const [heroSlide, setHeroSlide] = useState(0);
   const stageRef = useRef<HTMLDivElement>(null);
   const quoteButtonRef = useRef<HTMLButtonElement>(null);
 
+  const getEstimate = () => {
+    let base = estRoom === "Living" ? 150000 : estRoom === "Bedroom" ? 120000 : 180000;
+    let matMult = estMaterial === "Teak" ? 1.5 : estMaterial === "Walnut" ? 1.3 : 1.0;
+    let scaleMult = estScale === 1 ? 0.8 : estScale === 3 ? 1.4 : 1.0;
+    return (base * matMult * scaleMult).toLocaleString();
+  };
+
   useEffect(() => {
-    const revealDelay = prefersReducedMotion ? 220 : 980;
+    const revealDelay = prefersReducedMotion ? 220 : 450;
     const entrance = window.setTimeout(() => {
       setIsReady(true);
       setIsLoading(false);
     }, revealDelay);
     return () => window.clearTimeout(entrance);
+  }, [prefersReducedMotion]);
+
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+    const timer = setInterval(() => {
+      setHeroSlide(prev => (prev === 2 ? 0 : prev + 1));
+    }, 6000);
+    return () => clearInterval(timer);
   }, [prefersReducedMotion]);
 
   useEffect(() => {
@@ -299,11 +320,31 @@ export default function Home() {
 
           <div className="hero-visual reveal-item reveal-visual" ref={stageRef} onPointerMove={handleStageMove} onPointerLeave={handleStageLeave}>
             <div className="visual-topline" aria-hidden="true"><span>Room study / 01</span><span>29° 51' N / 91° 52' E</span></div>
-            <div className="room-frame">
-              <div className="room-media"><img src={heroRoom} alt="Sculptural boucle lounge chair in a charcoal-teal living room" /><div className="room-wash" aria-hidden="true" /><div className="light-leak" aria-hidden="true" /></div>
+            <div className={`room-frame ${isNightMode ? 'night-mode' : ''}`}>
+              <div className="room-media">
+                <img src="/assets/hero1.png" alt="Executive Lounge in dark teal" className={`hero-slide-img ${heroSlide === 0 ? 'is-active' : ''}`} />
+                <img src="/assets/hero2.png" alt="Atelier Dining Room in charcoal slate" className={`hero-slide-img ${heroSlide === 1 ? 'is-active' : ''}`} />
+                <img src="/assets/hero3.png" alt="Sanctuary Bedroom with ambient lighting" className={`hero-slide-img ${heroSlide === 2 ? 'is-active' : ''}`} />
+                <div className="room-wash" aria-hidden="true" />
+                <div className="light-leak" aria-hidden="true" />
+                <div className="night-overlay" aria-hidden="true" />
+              </div>
+              <div className="cad-overlay" aria-hidden="true">
+                <div className="cad-line cad-h" />
+                <div className="cad-line cad-v" />
+                <span className="cad-measure cad-top">W: 4200MM</span>
+                <span className="cad-measure cad-left">H: 2800MM</span>
+                <span className="cad-crosshair ch-1" />
+                <span className="cad-crosshair ch-2" />
+                <span className="cad-crosshair ch-3" />
+                <span className="cad-crosshair ch-4" />
+              </div>
               <div className="glass-lens" aria-hidden="true"><span>soft forms</span><span>hard lines</span></div>
               <div className="room-caption"><span>Quiet forms, considered living.</span><span>Scroll to enter <ArrowDown size={15} strokeWidth={1.4} /></span></div>
             </div>
+            <button className="lighting-toggle" onClick={() => setIsNightMode(!isNightMode)} aria-label="Toggle Showroom Lighting">
+              {isNightMode ? '☼ Daylight' : '☾ Evening'}
+            </button>
             <div className="visual-side-label" aria-hidden="true">HEAVEN / 001</div><span className="visual-corner corner-tl" aria-hidden="true" /><span className="visual-corner corner-br" aria-hidden="true" />
           </div>
         </div>
@@ -362,7 +403,7 @@ export default function Home() {
             <div className="value-swatch swatch-oak" role="img" aria-label="Placeholder for a natural wood furniture detail"><span>SWATCH / 01</span></div>
             <div className="value-card-index">01</div>
             <h3>Fully Bespoke</h3>
-            <p>Made to your exact dimensions and aesthetic preferences. Your home, your rules.</p>
+            <p>Made to your exact dimensions and aesthetic preferences. Your home, your rules, not mass-produced.</p>
             <span className="card-arrow"><ArrowUpRight size={16} strokeWidth={1.5} /></span>
           </motion.article>
           <motion.article variants={fadeUpVariant} className="value-card">
@@ -373,17 +414,31 @@ export default function Home() {
             <span className="card-arrow"><ArrowUpRight size={16} strokeWidth={1.5} /></span>
           </motion.article>
           <motion.article variants={fadeUpVariant} className="value-card">
-            <div className="value-swatch swatch-boucle" role="img" aria-label="Placeholder for a soft upholstery furniture detail"><span>SWATCH / 03</span></div>
+            <div className="value-swatch swatch-studio" role="img" aria-label="Placeholder for the Agrabad Experience Studio"><span>SWATCH / 03</span></div>
             <div className="value-card-index">03</div>
-            <h3>Turnkey Service</h3>
-            <p>From complimentary design consultations to white-glove delivery and professional installation.</p>
+            <h3>Agrabad Studio</h3>
+            <p>Visit our large physical showroom in Chattogram to touch, feel, and select your materials in person.</p>
             <span className="card-arrow"><ArrowUpRight size={16} strokeWidth={1.5} /></span>
           </motion.article>
           <motion.article variants={fadeUpVariant} className="value-card">
-            <div className="value-swatch swatch-studio" role="img" aria-label="Placeholder for the Agrabad Experience Studio"><span>SWATCH / 04</span></div>
+            <div className="value-swatch swatch-boucle" role="img" aria-label="Placeholder for design consultation"><span>SWATCH / 04</span></div>
             <div className="value-card-index">04</div>
-            <h3>Agrabad Experience Studio</h3>
-            <p>Visit our physical space in Chattogram to touch, feel, and select your materials in person.</p>
+            <h3>Free Consultation</h3>
+            <p>Work directly with our interior designers to map out your space and select the perfect pieces.</p>
+            <span className="card-arrow"><ArrowUpRight size={16} strokeWidth={1.5} /></span>
+          </motion.article>
+          <motion.article variants={fadeUpVariant} className="value-card">
+            <div className="value-swatch swatch-oak" style={{ filter: "hue-rotate(45deg)" }} role="img" aria-label="Placeholder for turnkey service"><span>SWATCH / 05</span></div>
+            <div className="value-card-index">05</div>
+            <h3>Turnkey Service</h3>
+            <p>From the first sketch to white-glove delivery and professional installation, everything is included.</p>
+            <span className="card-arrow"><ArrowUpRight size={16} strokeWidth={1.5} /></span>
+          </motion.article>
+          <motion.article variants={fadeUpVariant} className="value-card">
+            <div className="value-swatch swatch-brass" style={{ filter: "hue-rotate(90deg)" }} role="img" aria-label="Placeholder for flexible payments"><span>SWATCH / 06</span></div>
+            <div className="value-card-index">06</div>
+            <h3>Easy Payments</h3>
+            <p>Flexible and secure payment options designed to make your luxury commission stress-free.</p>
             <span className="card-arrow"><ArrowUpRight size={16} strokeWidth={1.5} /></span>
           </motion.article>
         </div>
@@ -507,6 +562,14 @@ export default function Home() {
             <div className="material-joint" aria-hidden="true"><span /><i /><b /></div>
             <div className="material-stage-label"><span>Material preview / live</span><strong>{selectedMaterial.name}</strong></div>
             <div className="material-stage-spec"><span>{selectedMaterial.group}</span><span>{selectedMaterial.detail}</span></div>
+            <div className="material-tech-metrics">
+              {Object.entries(selectedMaterial.specs).map(([key, val]) => (
+                <div key={key} className="metric-badge">
+                  <span>{key === 'moisture' ? 'Moisture' : key === 'density' ? 'Density' : key === 'durability' ? 'Durability' : key === 'rubCount' ? 'Rub Count' : key === 'comp' ? 'Composition' : 'Care'}</span>
+                  <strong>{val as string}</strong>
+                </div>
+              ))}
+            </div>
           </motion.div>
           <div className="material-preview-controls">
             <motion.div variants={fadeUpVariant} className="material-preview-kicker"><span className="kicker-number">06</span><span className="kicker-line" /><span>Material library</span></motion.div>
@@ -535,6 +598,72 @@ export default function Home() {
       </motion.section>
 
       <motion.section 
+        className="estimator-section" 
+        id="estimator" 
+        aria-labelledby="estimator-title"
+        initial={prefersReducedMotion ? "show" : "hidden"}
+        whileInView="show"
+        viewport={{ once: true, margin: "-10%" }}
+        variants={staggerContainer}
+      >
+        <div className="page-container estimator-grid">
+          <div className="estimator-content">
+            <motion.div variants={fadeUpVariant} className="estimator-kicker"><span className="kicker-number">07</span><span className="kicker-line" /><span>Commission Blueprint</span></motion.div>
+            <motion.h2 variants={fadeUpVariant} id="estimator-title">Calculate your<br /><em>investment.</em></motion.h2>
+            <motion.p variants={fadeUpVariant}>Get an instant baseline estimate for your bespoke furniture suite, tailored to your room scale and material choices.</motion.p>
+            
+            <motion.div variants={fadeUpVariant} className="estimator-controls">
+              <div className="estimator-group">
+                <label>Room Type</label>
+                <div className="estimator-pills">
+                  {["Living", "Bedroom", "Dining"].map(room => (
+                    <button type="button" key={room} className={estRoom === room ? "active" : ""} onClick={() => setEstRoom(room)}>{room}</button>
+                  ))}
+                </div>
+              </div>
+              <div className="estimator-group">
+                <label>Primary Material</label>
+                <div className="estimator-pills">
+                  {["Teak", "Walnut", "Oak"].map(mat => (
+                    <button type="button" key={mat} className={estMaterial === mat ? "active" : ""} onClick={() => setEstMaterial(mat)}>{mat}</button>
+                  ))}
+                </div>
+              </div>
+              <div className="estimator-group">
+                <label>Room Scale</label>
+                <div className="estimator-range">
+                  <span className={estScale === 1 ? "active" : ""} onClick={() => setEstScale(1)}>Intimate</span>
+                  <input type="range" min="1" max="3" step="1" value={estScale} onChange={(e) => setEstScale(parseInt(e.target.value))} />
+                  <span className={estScale === 3 ? "active" : ""} onClick={() => setEstScale(3)}>Grand</span>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+          
+          <motion.div variants={fadeVariant} className="estimator-receipt">
+            <div className="receipt-header">
+              <span>HEAVEN STUDIO</span>
+              <span>ESTIMATE</span>
+            </div>
+            <div className="receipt-body">
+              <div className="receipt-row"><span>Suite</span><span>{estRoom}</span></div>
+              <div className="receipt-row"><span>Material</span><span>{estMaterial}</span></div>
+              <div className="receipt-row"><span>Scale</span><span>{estScale === 1 ? "Intimate" : estScale === 2 ? "Standard" : "Grand"}</span></div>
+              <div className="receipt-divider" />
+              <div className="receipt-total">
+                <span>Estimated Investment</span>
+                <strong>৳ {getEstimate()}</strong>
+              </div>
+              <p className="receipt-note">*Final cost depends on exact dimensions, fabric tiers, and custom modifications.</p>
+            </div>
+            <a className="receipt-export" href={`${getWhatsAppLink()}&text=Hello! I just used the Commission Blueprint on your website. I am interested in a ${estRoom} suite made of ${estMaterial} for a ${estScale === 1 ? "Intimate" : estScale === 2 ? "Standard" : "Grand"} room. The estimate was ৳${getEstimate()}. Can we discuss further?`} target="_blank" rel="noreferrer">
+              Export to WhatsApp <ArrowUpRight size={16} />
+            </a>
+          </motion.div>
+        </div>
+      </motion.section>
+
+      <motion.section 
         className="experience-section" 
         id="experience" 
         aria-labelledby="experience-title"
@@ -559,10 +688,10 @@ export default function Home() {
           <div className="credibility-intro"><span className="showroom-eyebrow">A measured history</span><h3>Built over<br /><em>time.</em></h3></div>
           <div className="timeline-track" aria-label="Heaven Furniture Mart milestone timeline">
             <div className="timeline-line" aria-hidden="true" />
-            <div className="timeline-node"><span>2020</span><i /><strong>Founded</strong><p>Agrabad, Chattogram</p></div>
-            <div className="timeline-node"><span>2021</span><i /><strong>Showroom opened</strong><p>Experience Studio</p></div>
-            <div className="timeline-node"><span>2025</span><i /><strong>Chamber member</strong><p>Verification pending</p></div>
-            <div className="timeline-node"><span>2026</span><i /><strong>BFIOA recognition</strong><p>Verification pending</p></div>
+            <div className="timeline-node"><span>2020</span><i /><strong>Genesis</strong><p>Agrabad, Chattogram</p></div>
+            <div className="timeline-node"><span>2022</span><i /><strong>Expansion</strong><p>Experience Studio</p></div>
+            <div className="timeline-node"><span>2025</span><i /><strong>Prestige</strong><p>CCCI Chamber Member</p></div>
+            <div className="timeline-node timeline-highlight"><span>2026</span><i /><strong>National Honor</strong><p>BFIOA Award Recognition</p></div>
           </div>
         </motion.div>
         <motion.div variants={fadeUpVariant} className="page-container trust-panel">
@@ -601,6 +730,13 @@ export default function Home() {
           <div className="footer-contact"><span className="footer-label">Stay in touch</span><a href="mailto:heavenfurnituremart@gmail.com"><Mail size={14} strokeWidth={1.4} />heavenfurnituremart@gmail.com</a><a href="tel:+8801960481983"><Phone size={14} strokeWidth={1.4} />+880 1960-481983</a><div className="social-links"><a href="#social-facebook" onClick={handleSocialPlaceholder} aria-label="Facebook profile placeholder"><Facebook size={16} /></a><a href="#social-instagram" onClick={handleSocialPlaceholder} aria-label="Instagram profile placeholder"><Instagram size={16} /></a><a href="#social-youtube" onClick={handleSocialPlaceholder} aria-label="YouTube profile placeholder"><Youtube size={16} /></a></div></div>
         </footer>
         <a className="mobile-whatsapp" href={getWhatsAppLink()} target="_blank" rel="noreferrer"><MessageCircle size={17} strokeWidth={1.6} />WhatsApp the studio</a>
+        <a className="floating-whatsapp" href={getWhatsAppLink()} target="_blank" rel="noreferrer" aria-label="Chat with us on WhatsApp">
+          <div className="whatsapp-icon-wrap"><MessageCircle size={22} strokeWidth={1.8} /></div>
+          <div className="whatsapp-text">
+            <span className="whatsapp-title">Heaven Studio <span className="online-dot" /></span>
+            <span className="whatsapp-subtitle">Chat with our designers</span>
+          </div>
+        </a>
       </motion.section>
 
       <AnimatePresence>
@@ -626,7 +762,19 @@ export default function Home() {
             >
               <button className="modal-close lightbox-close" type="button" aria-label="Close collection details" onClick={() => setSelectedCollection(null)}><X size={21} /></button>
               <div className={`lightbox-visual ${selectedCollection.image === "placeholder" ? `collection-placeholder placeholder-${selectedCollection.id}` : ""}`}>
-                {selectedCollection.image === "placeholder" ? <span className="collection-placeholder-label">Photography placeholder</span> : <img src={selectedCollection.gallery[lightboxIndex]} alt={selectedCollection.imageAlt} />}
+                {selectedCollection.image === "placeholder" ? <span className="collection-placeholder-label">Photography placeholder</span> : <img src={selectedCollection.gallery[lightboxIndex]} alt={selectedCollection.imageAlt} className={isXrayMode ? 'xray-active' : ''} />}
+                
+                {isXrayMode && (
+                  <div className="xray-overlay">
+                    <div className="xray-point pt-1"><span>01 / FRAME</span><strong>Kiln-Dried Hardwood</strong></div>
+                    <div className="xray-point pt-2"><span>02 / CORE</span><strong>High-Density Foam</strong></div>
+                    <div className="xray-point pt-3"><span>03 / FINISH</span><strong>Hand-Stitched Seams</strong></div>
+                  </div>
+                )}
+                
+                <button className="xray-toggle" onClick={(e) => { e.stopPropagation(); setIsXrayMode(!isXrayMode); }}>
+                  {isXrayMode ? 'Close X-Ray' : 'View Anatomy'}
+                </button>
                 {selectedCollection.gallery && selectedCollection.gallery.length > 1 && (
                   <div className="lightbox-nav">
                     <button type="button" onClick={(e) => { e.stopPropagation(); setLightboxIndex((prev) => (prev === 0 ? selectedCollection.gallery.length - 1 : prev - 1)); }} aria-label="Previous image"><ArrowLeft size={18} /></button>
