@@ -4,6 +4,7 @@ import { getWhatsAppLink } from "@shared/contact";
 import { motion, AnimatePresence, useReducedMotion, Variants } from "framer-motion";
 import { i18n } from "../i18n";
 import RoomARPreview from "../components/RoomARPreview";
+import FaqSection from "../components/FaqSection";
 
 /**
  * Atelier Nocturne reminder: this page is intentionally limited to a cinematic Hero and a quiet,
@@ -34,6 +35,7 @@ const getSectionLabels = (t: any): Record<string, string> => ({
   "materials-preview": t.navMaterials,
   experience: t.navExperience,
   "ar-preview": t.navAR,
+  faq: t.navFAQ,
   contact: t.navContact,
 });
 
@@ -109,6 +111,14 @@ export default function Home() {
   const [isNightMode, setIsNightMode] = useState(false);
   const [isXrayMode, setIsXrayMode] = useState(false);
   const [heroSlide, setHeroSlide] = useState(0);
+  
+  const roomVideos = [
+    "/assets/premium furnitures - Trim.mp4",
+    "/assets/premium room.mp4",
+    "/assets/premium office.mp4"
+  ];
+  const [roomVideoIdx, setRoomVideoIdx] = useState(0);
+  
   const stageRef = useRef<HTMLDivElement>(null);
   const quoteButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -142,7 +152,7 @@ export default function Home() {
       const progress = scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0;
       document.documentElement.style.setProperty("--scroll-progress", `${progress}%`);
 
-      const sectionIds = ["top", "story", "why-custom", "collections", "portfolio", "journey", "materials-preview", "experience", "ar-preview", "contact"];
+      const sectionIds = ["top", "story", "why-custom", "collections", "portfolio", "journey", "materials-preview", "experience", "ar-preview", "faq", "contact"];
       const active = sectionIds.reduce((current, id) => {
         const section = document.getElementById(id);
         if (!section) return current;
@@ -310,9 +320,10 @@ export default function Home() {
             <a className={activeSection === "materials-preview" ? "is-active" : ""} href="#materials-preview" onClick={handleNavClick} aria-current={activeSection === "materials-preview" ? "page" : undefined}>{t.navMaterials}</a>
             <a className={activeSection === "experience" ? "is-active" : ""} href="#experience" onClick={handleNavClick} aria-current={activeSection === "experience" ? "page" : undefined}>{t.navExperience}</a>
             <a className={activeSection === "ar-preview" ? "is-active" : ""} href="#ar-preview" onClick={handleNavClick} aria-current={activeSection === "ar-preview" ? "page" : undefined}>{t.navAR}</a>
+            <a className={activeSection === "faq" ? "is-active" : ""} href="#faq" onClick={handleNavClick} aria-current={activeSection === "faq" ? "page" : undefined}>{t.navFAQ}</a>
             <a className={activeSection === "contact" ? "is-active" : ""} href="#contact" onClick={handleNavClick} aria-current={activeSection === "contact" ? "page" : undefined}>{t.navContact}</a>
           </nav>
-          <div className="mobile-section-context" aria-live="polite"><span className="mobile-section-context-line" /><span>{sectionLabels[activeSection] ?? "The studio"}</span><span className="mobile-section-context-index">{activeSection === "top" ? "00" : String(["story", "why-custom", "collections", "portfolio", "journey", "materials-preview", "experience", "ar-preview", "contact"].indexOf(activeSection) + 1).padStart(2, "0")}</span></div>
+          <div className="mobile-section-context" aria-live="polite"><span className="mobile-section-context-line" /><span>{sectionLabels[activeSection] ?? "The studio"}</span><span className="mobile-section-context-index">{activeSection === "top" ? "00" : String(["story", "why-custom", "collections", "portfolio", "journey", "materials-preview", "experience", "ar-preview", "faq", "contact"].indexOf(activeSection) + 1).padStart(2, "0")}</span></div>
           <div className="header-actions">
             <button className="lang-toggle" type="button" onClick={() => setLang(lang === 'en' ? 'bn' : 'en')} aria-label="Toggle language">
               <Globe size={15} /> {lang === 'en' ? 'BN' : 'EN'}
@@ -379,35 +390,56 @@ export default function Home() {
       </div>
 
       <motion.section 
-        className="brand-story-section" 
+        className="brand-story-section option-c-split" 
         id="story" 
         aria-labelledby="brand-story-title"
-        initial={prefersReducedMotion ? "show" : "hidden"}
-        whileInView="show"
-        viewport={{ once: true, margin: "-10%" }}
-        variants={staggerContainer}
       >
-        <div className="story-watermark" aria-hidden="true">2020</div>
-        <div className="page-container brand-story-grid">
-          <motion.div variants={fadeVariant} className="story-visuals">
-            <div className="furniture-portrait" style={{ backgroundImage: "url('/assets/brand-story-main.png')", backgroundSize: "cover", backgroundPosition: "center", width: "min(100%, 425px)", aspectRatio: "0.78", borderRadius: "2px", boxShadow: "17px 19px 0 rgba(74, 61, 48, 0.09)" }} role="img" aria-label="Heaven Furniture Mart furniture collection photograph">
-              <div className="furniture-shadow" aria-hidden="true" /><div className="placeholder-sheen" aria-hidden="true" />
-              <span className="placeholder-label">Furniture study / 01</span><span className="placeholder-name">Made for the way you live</span>
+        <div className="page-container split-story-container">
+          <div className="split-story-gallery">
+            <div className="gallery-item">
+              <video autoPlay muted loop playsInline className="gallery-video">
+                <source src="/assets/crafting.mp4" type="video/mp4" />
+              </video>
+              <div className="gallery-caption"><span>Atelier crafting / 01</span><strong>Master Artisans</strong></div>
             </div>
-            {/* TODO: Replace this placeholder with a close-up of joinery, upholstery, wood grain, or a signature furniture detail. */}
-            <div className="team-photo-container" role="img" aria-label="Heaven Furniture Mart master artisans and team">
-              <img src="/assets/team.png" alt="Heaven Furniture Mart Team" className="team-photo-img" />
-              <div className="detail-lines" aria-hidden="true" />
-              <span className="team-photo-label">{t.brandLabel}</span>
+            
+            <div className="gallery-item video-carousel-wrapper">
+              <video 
+                autoPlay 
+                muted 
+                playsInline 
+                className="gallery-video"
+                src={roomVideos[roomVideoIdx]}
+                onEnded={() => setRoomVideoIdx((prev) => (prev + 1) % roomVideos.length)}
+              />
+              <div className="gallery-caption">
+                <span>Premium Rooms / 0{roomVideoIdx + 1}</span>
+                <strong>The Collection</strong>
+              </div>
+              <div className="video-carousel-controls">
+                <button type="button" aria-label="Previous video" onClick={() => setRoomVideoIdx((prev) => prev === 0 ? roomVideos.length - 1 : prev - 1)}>
+                  <ArrowLeft size={18} />
+                </button>
+                <button type="button" aria-label="Next video" onClick={() => setRoomVideoIdx((prev) => (prev + 1) % roomVideos.length)}>
+                  <ArrowRight size={18} />
+                </button>
+              </div>
             </div>
-            <div className="story-visual-note">{t.brandNote}</div>
-          </motion.div>
+          </div>
 
-          <div className="story-content">
-            <motion.div variants={fadeUpVariant} className="story-kicker"><span className="kicker-number">01</span><span className="kicker-line" /><span>{t.brandKicker}</span></motion.div>
-            <motion.h2 variants={fadeUpVariant} className="story-title" id="brand-story-title">{t.brandTitle.split(' ')[0]} {t.brandTitle.split(' ')[1]}<br /><em>{t.brandTitle.split(' ').slice(2).join(' ')}</em></motion.h2>
-            <motion.blockquote variants={fadeUpVariant} className="founder-quote">{t.brandQuote}<cite>{t.brandQuoteAuthor}</cite></motion.blockquote>
-            <motion.div variants={fadeUpVariant} className="story-narrative"><span className="story-accent-line" aria-hidden="true" /><p>{t.brandDesc}</p></motion.div>
+          <div className="split-story-sticky">
+            <motion.div 
+              initial={prefersReducedMotion ? "show" : "hidden"}
+              whileInView="show"
+              viewport={{ once: true, margin: "-10%" }}
+              variants={staggerContainer}
+              className="story-content"
+            >
+              <motion.div variants={fadeUpVariant} className="story-kicker"><span className="kicker-number">01</span><span className="kicker-line" /><span>{t.brandKicker}</span></motion.div>
+              <motion.h2 variants={fadeUpVariant} className="story-title" id="brand-story-title">{t.brandTitle.split(' ')[0]} {t.brandTitle.split(' ')[1]}<br /><em>{t.brandTitle.split(' ').slice(2).join(' ')}</em></motion.h2>
+              <motion.blockquote variants={fadeUpVariant} className="founder-quote">{t.brandQuote}<cite>{t.brandQuoteAuthor}</cite></motion.blockquote>
+              <motion.div variants={fadeUpVariant} className="story-narrative"><span className="story-accent-line" aria-hidden="true" /><p>{t.brandDesc}</p></motion.div>
+            </motion.div>
           </div>
         </div>
       </motion.section>
@@ -762,6 +794,8 @@ export default function Home() {
 
       <RoomARPreview t={t as unknown as Record<string, string>} prefersReducedMotion={prefersReducedMotion} />
 
+      <FaqSection t={t as unknown as Record<string, string>} prefersReducedMotion={prefersReducedMotion} />
+
       <motion.section
         className="contact-section"
         id="contact" 
@@ -773,7 +807,7 @@ export default function Home() {
       >
         <div className="contact-arc" aria-hidden="true" />
         <div className="page-container contact-main">
-          <motion.div variants={fadeUpVariant} className="contact-intro"><div className="contact-kicker"><span className="kicker-number">09</span><span className="kicker-line" /><span>{t.contactKicker}</span></div><h2 id="contact-title">{t.contactTitle.split(' ')[0]} {t.contactTitle.split(' ')[1]}<br /><em>{t.contactTitle.split(' ').slice(2).join(' ')}</em></h2><p>{t.contactDesc}</p></motion.div>
+          <motion.div variants={fadeUpVariant} className="contact-intro"><div className="contact-kicker"><span className="kicker-number">10</span><span className="kicker-line" /><span>{t.contactKicker}</span></div><h2 id="contact-title">{t.contactTitle.split(' ')[0]} {t.contactTitle.split(' ')[1]}<br /><em>{t.contactTitle.split(' ').slice(2).join(' ')}</em></h2><p>{t.contactDesc}</p></motion.div>
           <motion.div variants={fadeUpVariant} className="contact-form-shell">
             {contactSubmitted ? <div className="contact-success"><span className="success-mark"><Check size={17} strokeWidth={1.5} /></span><span className="contact-eyebrow">Brief prepared</span><h3>Your brief is ready<br /><em>for the studio.</em></h3><p>{t.contactSuccess}</p><button type="button" className="contact-reset" onClick={() => { setContactSubmitted(false); setContactErrors({}); }}>Edit request <ArrowUpRight size={14} /></button></div> : <form onSubmit={handleContactSubmit} className="consultation-form" noValidate><label className={contactErrors.name ? "has-error" : ""}><span>{t.contactName}</span><input name="name" type="text" placeholder={t.contactName} aria-invalid={Boolean(contactErrors.name)} aria-describedby={contactErrors.name ? "contact-name-error" : undefined} onChange={() => handleContactFieldChange("name")} />{contactErrors.name && <small id="contact-name-error" className="field-error">{contactErrors.name}</small>}</label><label className={contactErrors.phone ? "has-error" : ""}><span>{t.contactPhone}</span><input name="phone" type="tel" placeholder="+880 1xxx-xxxxxx" aria-invalid={Boolean(contactErrors.phone)} aria-describedby={contactErrors.phone ? "contact-phone-error" : undefined} onChange={() => handleContactFieldChange("phone")} />{contactErrors.phone && <small id="contact-phone-error" className="field-error">{contactErrors.phone}</small>}</label><label className={contactErrors.service ? "has-error" : ""}><span>{t.contactService}</span><select name="service" defaultValue="" aria-invalid={Boolean(contactErrors.service)} aria-describedby={contactErrors.service ? "contact-service-error" : undefined} onChange={() => handleContactFieldChange("service")}><option value="" disabled>{t.contactServiceOptions[0]}</option><option>{t.contactServiceOptions[1]}</option><option>{t.contactServiceOptions[2]}</option><option>{t.contactServiceOptions[3]}</option><option>{t.contactServiceOptions[4]}</option></select>{contactErrors.service && <small id="contact-service-error" className="field-error">{contactErrors.service}</small>}</label><button className="consultation-submit" type="submit">{t.contactBtn} <ArrowUpRight size={16} strokeWidth={1.4} /></button></form>}
             <a className="whatsapp-line" href={getWhatsAppLink()} target="_blank" rel="noreferrer"><MessageCircle size={16} strokeWidth={1.5} /><span>Prefer instant answers? <strong>Chat directly on WhatsApp</strong> <small>(+880 1960-481983)</small></span><ArrowUpRight size={14} strokeWidth={1.4} /></a>

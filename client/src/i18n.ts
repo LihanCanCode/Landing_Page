@@ -9,6 +9,7 @@ export const i18n = {
     navMaterials: "Materials",
     navExperience: "Experience",
     navAR: "AR Preview",
+    navFAQ: "FAQ",
     navContact: "Contact",
 
     // AR Preview
@@ -22,6 +23,23 @@ export const i18n = {
     arHeight: "Height",
     arNoteAndroid: "Available on Android Chrome via Scene Viewer",
     arBtnLaunchShort: "View in your room",
+
+    // FAQ
+    faqKicker: "Questions, answered",
+    faqTitle: "Everything you need to know",
+    faqDesc: "The details our clients ask about most, before their first consultation.",
+    faqQ1: "How long does a custom order take to complete?",
+    faqA1: "Most custom pieces take 4-6 weeks from final design approval to delivery, depending on materials and finish. Standard collection pieces are typically ready within 10-15 days.",
+    faqQ2: "Can I customize the wood, fabric, or colour of any piece?",
+    faqA2: "Yes. Every piece in our collections can be reconfigured in size, wood species, fabric, and finish. Our design consultants will guide you through the material board during your consultation.",
+    faqQ3: "Do you offer a warranty on your furniture?",
+    faqA3: "All handcrafted pieces carry a 2-year structural warranty covering the frame and joinery, plus a 1-year warranty on upholstery and hardware.",
+    faqQ4: "How does the AR room preview work?",
+    faqA4: "Open the AR Preview section on an Android phone with Chrome, choose a piece, and tap \"View in your room.\" Your camera places a true-to-scale 3D model directly in your space — no app download needed.",
+    faqQ5: "What is the payment and consultation process?",
+    faqA5: "We begin with a free design consultation, followed by a 50% advance to start production. The remaining balance is due upon delivery and installation at your home.",
+    faqQ6: "Do you deliver and install outside Chattogram?",
+    faqA6: "Yes, we deliver and install across Bangladesh. Delivery timelines and logistics costs outside Chattogram are confirmed during your consultation.",
 
     // Hero
     heroKicker: "Custom interiors / Chattogram",
@@ -220,6 +238,7 @@ export const i18n = {
     navMaterials: "উপকরণ সূচি",
     navExperience: "স্টুডিও ভিজিট",
     navAR: "এআর প্রিভিউ",
+    navFAQ: "সাধারণ জিজ্ঞাসা",
     navContact: "যোগাযোগ",
 
     // AR Preview
@@ -233,6 +252,23 @@ export const i18n = {
     arHeight: "উচ্চতা",
     arNoteAndroid: "সিন ভিউয়ারের মাধ্যমে অ্যান্ড্রয়েড ক্রোমে উপলব্ধ",
     arBtnLaunchShort: "আপনার ঘরে দেখুন",
+
+    // FAQ
+    faqKicker: "প্রশ্নের উত্তর",
+    faqTitle: "যা কিছু আপনার জানা প্রয়োজন",
+    faqDesc: "প্রথম পরামর্শের আগে আমাদের ক্লায়েন্টরা সবচেয়ে বেশি যা জিজ্ঞাসা করেন।",
+    faqQ1: "একটি কাস্টম অর্ডার সম্পন্ন করতে কত সময় লাগে?",
+    faqA1: "চূড়ান্ত ডিজাইন অনুমোদনের পর থেকে ডেলিভারি পর্যন্ত বেশিরভাগ কাস্টম আসবাব তৈরি করতে ৪-৬ সপ্তাহ সময় লাগে, যা উপকরণ ও ফিনিশের উপর নির্ভর করে। স্ট্যান্ডার্ড কালেকশনের আসবাব সাধারণত ১০-১৫ দিনের মধ্যে প্রস্তুত হয়।",
+    faqQ2: "আমি কি যেকোনো আসবাবের কাঠ, ফ্যাব্রিক বা রঙ কাস্টমাইজ করতে পারি?",
+    faqA2: "হ্যাঁ। আমাদের কালেকশনের প্রতিটি আসবাব আকার, কাঠের প্রজাতি, ফ্যাব্রিক এবং ফিনিশে পুনর্গঠন করা যায়। আপনার পরামর্শের সময় আমাদের ডিজাইন কনসালট্যান্ট আপনাকে ম্যাটেরিয়াল বোর্ড দেখিয়ে গাইড করবেন।",
+    faqQ3: "আপনারা কি আপনাদের আসবাবের উপর ওয়ারেন্টি দেন?",
+    faqA3: "সকল হস্তনির্মিত আসবাবে ফ্রেম ও জোড়ার উপর ২ বছরের স্ট্রাকচারাল ওয়ারেন্টি এবং আপহোলস্টারি ও হার্ডওয়্যারের উপর ১ বছরের ওয়ারেন্টি রয়েছে।",
+    faqQ4: "এআর রুম প্রিভিউ কীভাবে কাজ করে?",
+    faqA4: "অ্যান্ড্রয়েড ফোনে ক্রোম দিয়ে এআর প্রিভিউ সেকশন খুলুন, একটি আসবাব বেছে নিন এবং \"আপনার ঘরে দেখুন\" চাপুন। আপনার ক্যামেরা সরাসরি আপনার ঘরে সঠিক মাপে একটি থ্রিডি মডেল বসিয়ে দেখাবে — কোনো অ্যাপ ডাউনলোডের প্রয়োজন নেই।",
+    faqQ5: "পেমেন্ট এবং পরামর্শ প্রক্রিয়া কী?",
+    faqA5: "আমরা একটি বিনামূল্যে ডিজাইন পরামর্শ দিয়ে শুরু করি, এরপর উৎপাদন শুরু করতে ৫০% অগ্রিম প্রয়োজন হয়। বাকি অর্থ আপনার বাড়িতে ডেলিভারি ও ইনস্টলেশনের সময় পরিশোধ করতে হয়।",
+    faqQ6: "আপনারা কি চট্টগ্রামের বাইরে ডেলিভারি ও ইনস্টলেশন করেন?",
+    faqA6: "হ্যাঁ, আমরা সারা বাংলাদেশে ডেলিভারি ও ইনস্টলেশন করি। চট্টগ্রামের বাইরে ডেলিভারির সময়সূচি ও খরচ আপনার পরামর্শের সময় নিশ্চিত করা হয়।",
 
     // Hero
     heroKicker: "কাস্টম ইন্টেরিয়র / চট্টগ্রাম",

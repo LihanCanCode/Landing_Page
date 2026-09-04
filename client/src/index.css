@@ -5353,3 +5353,121 @@ textarea:focus-visible {
   margin-top: 6px;
   display: block;
 }
+
+/* Option C: Split-Screen Sticky Scroll */
+.brand-story-section.option-c-split {
+  padding: clamp(100px, 12vw, 180px) 0;
+  background: var(--parchment, #faf9f6);
+  color: var(--teal-900, #17231f);
+  position: relative;
+  overflow: visible;
+}
+
+.split-story-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 8vw;
+}
+
+.split-story-sticky {
+  flex: 1;
+  position: sticky;
+  top: clamp(100px, 15vh, 200px);
+  padding-bottom: 100px;
+}
+
+.split-story-gallery {
+  flex: 1.2;
+  display: flex;
+  flex-direction: column;
+  gap: 80px;
+}
+
+.gallery-item {
+  position: relative;
+  width: 100%;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+}
+
+.gallery-item img,
+.gallery-item video {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+.gallery-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 30px;
+  background: linear-gradient(to top, rgba(17,25,21,0.8), transparent);
+  color: var(--parchment, #faf9f6);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.gallery-caption span {
+  font-family: "Manrope", sans-serif;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--brass-light, #d4b87f);
+}
+
+.gallery-caption strong {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 24px;
+  font-weight: 400;
+  font-style: italic;
+}
+
+@media (max-width: 900px) {
+  .split-story-container {
+    flex-direction: column;
+    gap: 60px;
+  }
+  .split-story-sticky {
+    position: relative;
+    top: 0;
+    padding-bottom: 0;
+  }
+}
+
+/* Video Carousel Controls */
+.video-carousel-controls {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 16px;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+.video-carousel-controls button {
+  pointer-events: auto;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  background: rgba(17, 25, 21, 0.4);
+  color: var(--parchment, #faf9f6);
+  border: 1px solid rgba(250, 249, 246, 0.25);
+  border-radius: 50%;
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+}
+.video-carousel-controls button:hover {
+  background: var(--brass, #b79a6b);
+  color: var(--teal-900, #17231f);
+  border-color: var(--brass, #b79a6b);
+  transform: scale(1.1);
+}
