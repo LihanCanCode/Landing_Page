@@ -9,8 +9,8 @@ html.lang-bn, html.lang-bn body, html.lang-bn button, html.lang-bn input, html.l
 html.lang-bn h1, html.lang-bn h2, html.lang-bn h3, html.lang-bn .hero-title, html.lang-bn .journey-number, html.lang-bn .kicker-number {
   font-family: "Hind Siliguri", sans-serif;
   letter-spacing: 0;
+  line-height: 1.1 !important;
 }
-
 @custom-variant dark (&:is(.dark *));
 
 /*

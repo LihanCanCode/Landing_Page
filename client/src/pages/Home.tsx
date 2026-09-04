@@ -44,10 +44,10 @@ const getCollections = (t: any) => [
   { id: "bedroom", category: "Beds", number: "02", title: t.colBedroom || "Bedroom", items: t.colBedroomItems || "Upholstered beds · Custom wardrobes · Vanity dressers", specs: "Linen boucle / smoked oak / aged brass", price: "৳ 1,80,000", image: "/assets/collection-bedroom.jpg", gallery: ["/assets/collection-bedroom.jpg", "/assets/Bedroom2.jpg", "/assets/bed_1.jpg", "/assets/bed_2.jpg", "/assets/bed_3.jpg"], imageAlt: "Heaven Furniture Mart ornate carved bed — Bedroom collection" },
   { id: "dining", category: "Dining", number: "03", title: t.colDining || "Dining", items: t.colDiningItems || "Solid wood tables · Handcrafted chairs · Credenzas", specs: "Burma Teak / saddle leather / Studio Brass", price: "৳ 1,50,000", image: "/assets/collection-dining.jpg", gallery: ["/assets/collection-dining.jpg", "/assets/chair and table.jpg", "/assets/table_1.jpg"], imageAlt: "Heaven Furniture Mart marble top dining set — Dining collection" },
   { id: "office", category: "Workspace", number: "04", title: t.colOffice || "Office & Executive", items: t.colOfficeItems || "Bespoke desks · Library walls · Conference tables", specs: "Smoked oak / Italian marble / brushed metal", price: "৳ 95,000", image: "/assets/collection-office.jpg", gallery: ["/assets/collection-office.jpg", "/assets/office2.jpg", "/assets/office3.jpg", "/assets/office4.jpg", "/assets/office chair_1.jpg", "/assets/office_chair_2.jpg", "/assets/office chair_3.jpg"], imageAlt: "Heaven Furniture Mart executive leather office chair — Office collection" },
-  { id: "storage", category: "Storage", number: "05", title: "Storage & Wardrobes", items: "Bespoke Almirahs · Walk-in closets · Sideboards", specs: "Solid Teak / Brass Handles", price: "৳ 85,000", image: "/assets/Almirah.jpg", gallery: ["/assets/Almirah.jpg", "/assets/almirah_2.jpg"], imageAlt: "Luxury solid wood almirah" },
-  { id: "accent", category: "Seating", number: "06", title: "Accent Chairs", items: "Lounge chairs · Occasional seating", specs: "Premium Velvet / Walnut frame", price: "৳ 35,000", image: "/assets/full room.jpg", gallery: ["/assets/full room.jpg", "/assets/largeroom.jpg"], imageAlt: "Accent lounge chair" },
-  { id: "decor", category: "Decor", number: "07", title: "Mirrors & Decor", items: "Statement mirrors · Wall accents · Decorative pieces", specs: "Bevelled glass / Brass frame", price: "৳ 25,000", image: "/assets/Mirror.jpg", gallery: ["/assets/Mirror.jpg", "/assets/mirror2.jpg"], imageAlt: "Ornate brass-framed mirror" },
-  { id: "others", category: "Others", number: "08", title: "Others", items: "Swings & jhulas · Specialty pieces · More on request", specs: "Mixed materials / Custom finishes", price: "Price on request", image: "/assets/dolna.jpg", gallery: ["/assets/dolna.jpg", "/assets/dolna 2.jpg"], imageAlt: "Custom furniture piece" }
+  { id: "storage", category: "Storage", number: "05", title: t.colStorage || "Storage & Wardrobes", items: t.colStorageItems || "Bespoke Almirahs · Walk-in closets · Sideboards", specs: "Solid Teak / Brass Handles", price: "৳ 85,000", image: "/assets/Almirah.jpg", gallery: ["/assets/Almirah.jpg", "/assets/almirah_2.jpg"], imageAlt: "Luxury solid wood almirah" },
+  { id: "accent", category: "Seating", number: "06", title: t.colAccent || "Accent Chairs", items: t.colAccentItems || "Lounge chairs · Occasional seating", specs: "Premium Velvet / Walnut frame", price: "৳ 35,000", image: "/assets/full room.jpg", gallery: ["/assets/full room.jpg", "/assets/largeroom.jpg"], imageAlt: "Accent lounge chair" },
+  { id: "decor", category: "Decor", number: "07", title: t.colDecor || "Mirrors & Decor", items: t.colDecorItems || "Statement mirrors · Wall accents · Decorative pieces", specs: "Bevelled glass / Brass frame", price: "৳ 25,000", image: "/assets/Mirror.jpg", gallery: ["/assets/Mirror.jpg", "/assets/mirror2.jpg"], imageAlt: "Ornate brass-framed mirror" },
+  { id: "others", category: "Others", number: "08", title: t.colOthers || "Others", items: t.colOthersItems || "Swings & jhulas · Specialty pieces · More on request", specs: "Mixed materials / Custom finishes", price: t.priceOnRequest || "Price on request", image: "/assets/dolna.jpg", gallery: ["/assets/dolna.jpg", "/assets/dolna 2.jpg"], imageAlt: "Custom furniture piece" }
 ];
 
 // Framer Motion Variants
@@ -391,9 +391,7 @@ export default function Home() {
               <div className="glass-lens" aria-hidden="true"><span>soft forms</span><span>hard lines</span></div>
               <div className="room-caption"><span>Quiet forms, considered living.</span><span>Scroll to enter <ArrowDown size={15} strokeWidth={1.4} /></span></div>
             </div>
-            <button className="lighting-toggle" onClick={() => setIsNightMode(!isNightMode)} aria-label="Toggle Showroom Lighting">
-              {isNightMode ? '☼ Daylight' : '☾ Evening'}
-            </button>
+
             <div className="visual-side-label" aria-hidden="true">HEAVEN / 001</div><span className="visual-corner corner-tl" aria-hidden="true" /><span className="visual-corner corner-br" aria-hidden="true" />
           </div>
         </div>
@@ -443,6 +441,17 @@ export default function Home() {
                 </button>
               </div>
             </div>
+            <motion.div 
+              initial={prefersReducedMotion ? "show" : "hidden"}
+              whileInView="show"
+              viewport={{ once: true, margin: "-10%" }}
+              variants={fadeUpVariant} 
+              style={{ display: 'flex', justifyContent: 'center', marginTop: '60px' }}
+            >
+              <a href="#collections" className="btn-teal-shadow">
+                See our catalogue <ArrowUpRight size={14} strokeWidth={1.5} />
+              </a>
+            </motion.div>
           </div>
 
           <div className="split-story-sticky">
@@ -694,7 +703,7 @@ export default function Home() {
                 <div className="material-group" key={group}>
                   <div className="material-group-label"><span>{lang === 'bn' ? (group === 'Wood' ? 'কাঠ' : 'ফেব্রিক') : group}</span><span>{group === "Wood" ? (lang === 'bn' ? "০৪ ফিনিশ" : "04 finishes") : (lang === 'bn' ? "০৩ ফিনিশ" : "03 finishes")}</span></div>
                   <div className="material-swatches" role="radiogroup" aria-label={`${group} materials`}>
-                    {materials.filter((material) => (lang === 'bn' ? material.group === (group === 'Wood' ? 'কাঠ' : 'ফেব্রিক') : material.group === group)).map((material) => (
+                    {materials.filter((material) => material.group === (group === 'Wood' ? (t.matWood || 'Wood') : (t.matFabric || 'Fabric'))).map((material) => (
                       <button className={`material-swatch ${material.className} ${selectedMaterial.id === material.id ? "is-active" : ""}`} key={material.id} type="button" role="radio" aria-checked={selectedMaterial.id === material.id} aria-label={material.name} data-tooltip={material.name} onClick={() => selectMaterial(material)}>
                         {selectedMaterial.id === material.id && (
                           <motion.span layoutId="active-material" className="active-swatch-dot" transition={{ type: "spring", stiffness: 300, damping: 30 }} />
