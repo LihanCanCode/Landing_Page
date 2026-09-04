@@ -80,6 +80,16 @@ const modalVariant: Variants = {
   exit: { opacity: 0, scale: 0.98, y: 5, transition: { duration: 0.2, ease: "easeIn" } }
 };
 
+const timelineNodeVariant: Variants = {
+  hidden: { opacity: 0, x: -30 },
+  show: { opacity: 1, x: 0, transition: { duration: 0.6, ease: "easeOut" } }
+};
+
+const awardVariant: Variants = {
+  hidden: { opacity: 0, scale: 0.9, x: 10 },
+  show: { opacity: 1, scale: 1, x: 0, transition: { duration: 0.7, type: "spring", bounce: 0.3 } }
+};
+
 export default function Home() {
   const prefersReducedMotion = useReducedMotion();
   const [lang, setLang] = useState<'en'|'bn'>('en');
@@ -321,9 +331,8 @@ export default function Home() {
         <span className="page-loader-year">Chattogram · 2026</span>
       </div>
       <div className="scroll-progress" aria-hidden="true" />
-      <section className="hero-section" id="top">
-        <div className="hero-backdrop" aria-hidden="true" />
-        <div className="hero-grid-lines" aria-hidden="true" />
+      
+      <div className="sticky-header-wrapper">
         <header className="site-header page-container">
           <a className="brand-lockup" href="#top" aria-label="Heaven Furniture Mart home">
             <img className="brand-mark" src={archMark} alt="" />
@@ -352,6 +361,12 @@ export default function Home() {
             </button>
           </div>
         </header>
+      </div>
+
+      <section className="hero-section" id="top">
+        <div className="hero-backdrop" aria-hidden="true" />
+        <div className="hero-grid-lines" aria-hidden="true" />
+
 
         <div className="hero-content page-container">
           <div className="hero-copy-column">
@@ -750,18 +765,30 @@ export default function Home() {
         <motion.div variants={fadeUpVariant} className="page-container credibility-timeline">
           <div className="credibility-intro">
             <div><span className="showroom-eyebrow">{t.credibilityKicker}</span><h3>{t.credibilityTitle.split(' ')[0]}<br /><em>{t.credibilityTitle.split(' ').slice(1).join(' ')}</em></h3></div>
-            <div className="award-badge-container">
-              <img src="/assets/award.png" alt="National Honor Award" className="award-badge-img" />
-              <span>{t.credibilityAward}</span>
-            </div>
           </div>
-          <div className="timeline-track" aria-label="Heaven Furniture Mart milestone timeline">
+          <motion.div 
+            className="timeline-track" 
+            aria-label="Heaven Furniture Mart milestone timeline"
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-10%" }}
+            variants={{
+              hidden: { opacity: 0 },
+              show: { opacity: 1, transition: { staggerChildren: 0.3 } }
+            }}
+          >
             <div className="timeline-line" aria-hidden="true" />
-            <div className="timeline-node"><span>2020</span><i /><strong>{t.timeline1Title}</strong><p>{t.timeline1Desc}</p></div>
-            <div className="timeline-node"><span>2022</span><i /><strong>{t.timeline2Title}</strong><p>{t.timeline2Desc}</p></div>
-            <div className="timeline-node"><span>2025</span><i /><strong>{t.timeline3Title}</strong><p>{t.timeline3Desc}</p></div>
-            <div className="timeline-node timeline-highlight"><span>2026</span><i /><strong>{t.timeline4Title}</strong><p>{t.timeline4Desc}</p></div>
-          </div>
+            <motion.div variants={timelineNodeVariant} className="timeline-node"><span>2020</span><i /><strong>{t.timeline1Title}</strong><p>{t.timeline1Desc}</p></motion.div>
+            <motion.div variants={timelineNodeVariant} className="timeline-node"><span>2022</span><i /><strong>{t.timeline2Title}</strong><p>{t.timeline2Desc}</p></motion.div>
+            <motion.div variants={timelineNodeVariant} className="timeline-node"><span>2025</span><i /><strong>{t.timeline3Title}</strong><p>{t.timeline3Desc}</p></motion.div>
+            <motion.div variants={timelineNodeVariant} className="timeline-node timeline-highlight">
+              <span>2026</span><i /><strong>{t.timeline4Title}</strong><p>{t.timeline4Desc}</p>
+              <motion.div variants={awardVariant} className="award-badge-container award-badge-wrapper">
+                <img src="/assets/award.png" alt="National Honor Award" className="award-badge-img" />
+                <span>{t.credibilityAward}</span>
+              </motion.div>
+            </motion.div>
+          </motion.div>
         </motion.div>
         <motion.div variants={fadeUpVariant} className="page-container trust-panel">
           <div className="trust-heading"><span className="showroom-eyebrow">Client stories</span><h3>Trust is<br /><em>felt.</em></h3><p>Verified homeowner stories and published project outcomes will live here once approved for release.</p></div>

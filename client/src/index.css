@@ -167,8 +167,19 @@ img {
 }
 
 .studio-page {
-  overflow: hidden;
+  overflow-x: hidden;
   background: var(--teal-900);
+}
+
+.sticky-header-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 999;
+  background: rgba(18, 27, 24, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(239, 232, 220, 0.1);
 }
 
 button:focus-visible,
@@ -315,8 +326,7 @@ textarea:focus-visible {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 104px;
-  border-bottom: 1px solid rgba(239, 232, 220, 0.15);
+  min-height: 76px;
 }
 
 .brand-lockup {
@@ -2900,13 +2910,14 @@ textarea:focus-visible {
   grid-template-columns: repeat(4, 1fr);
   gap: 15px;
   padding-top: 2px;
+  padding-right: 120px; /* added space for the badge */
 }
 
 .timeline-line {
   position: absolute;
-  top: 8px;
-  right: 10%;
-  left: 3%;
+  top: -12px;
+  right: calc(120px + 18%);
+  left: 2%;
   height: 1px;
   background: rgba(183, 154, 107, 0.55);
 }
@@ -3528,7 +3539,7 @@ textarea:focus-visible {
   }
 
   .site-header {
-    min-height: 84px;
+    min-height: 68px;
   }
 
   .desktop-nav {
@@ -3864,6 +3875,7 @@ textarea:focus-visible {
     display: block;
     margin-top: 55px;
     padding-left: 30px;
+    padding-right: 0;
   }
 
   .timeline-line {
@@ -5310,6 +5322,23 @@ textarea:focus-visible {
   border-radius: 4px;
   border: 1px solid rgba(183, 154, 107, 0.12);
   max-width: 200px;
+}
+
+.award-badge-wrapper {
+  position: absolute;
+  left: 100px;
+  top: -15px;
+  z-index: 10;
+  width: max-content;
+}
+
+@media (max-width: 900px) {
+  .award-badge-wrapper {
+    position: relative;
+    left: 0;
+    top: 20px;
+    margin-bottom: 30px;
+  }
 }
 
 .award-badge-img {

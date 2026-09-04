@@ -44,8 +44,8 @@ export const i18n = {
     // Hero
     heroKicker: "Custom interiors / Chattogram",
     heroTitle1: "Furniture,",
-    heroTitle2: "",
-    heroTitle3: "গড়ে উঠুক,",
+    heroTitle2: "crafted",
+    heroTitle3: "around",
     heroTitle4: "you",
     heroDesc: "Premium Custom Furniture. Made to your exact size and style.",
     heroBtnQuote: "Request a Quote",
@@ -172,7 +172,7 @@ export const i18n = {
 
     // Materials
     materialKicker: "Material library",
-    materialTitle: "Crafted with uncompromising quality.",
+    materialTitle: "Crafted with quality.",
     materialDesc: "Choose from over 50+ premium upholstery and wood finish options.",
     materialSelected: "Selected finish",
 
