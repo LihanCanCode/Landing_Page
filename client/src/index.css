@@ -1068,6 +1068,18 @@ textarea:focus-visible {
   font-style: italic;
 }
 
+.founder-quote .closing-quote {
+  position: relative;
+  top: 0.1em;
+  left: 2px;
+  color: #b79a6b;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 46px;
+  font-style: italic;
+  line-height: 0;
+  display: inline-block;
+}
+
 .founder-quote cite {
   display: block;
   margin-top: 25px;
@@ -5470,4 +5482,96 @@ textarea:focus-visible {
   color: var(--teal-900, #17231f);
   border-color: var(--brass, #b79a6b);
   transform: scale(1.1);
+}
+
+/* Infinity Grid Catalog */
+.collections-expanded-container {
+  margin-top: clamp(60px, 8vw, 100px);
+}
+.catalog-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 50px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(44, 40, 34, 0.1);
+}
+.catalog-filters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.filter-pill {
+  padding: 8px 16px;
+  border-radius: 40px;
+  border: 1px solid rgba(44, 40, 34, 0.2);
+  background: transparent;
+  color: #6c665d;
+  font-family: "Manrope", sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.filter-pill:hover {
+  background: rgba(44, 40, 34, 0.05);
+}
+.filter-pill.is-active {
+  background: var(--brass, #b79a6b);
+  border-color: var(--brass, #b79a6b);
+  color: var(--teal-900, #17231f);
+}
+.catalog-search input {
+  padding: 10px 18px;
+  border-radius: 4px;
+  border: 1px solid rgba(44, 40, 34, 0.2);
+  background: transparent;
+  color: #2c2822;
+  font-family: "Manrope", sans-serif;
+  font-size: 13px;
+  width: 250px;
+  transition: border-color 0.3s ease;
+}
+.catalog-search input:focus {
+  outline: none;
+  border-color: var(--brass, #b79a6b);
+}
+.collections-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 40px 24px;
+}
+@media (max-width: 768px) {
+  .catalog-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .catalog-search input {
+    width: 100%;
+  }
+}
+
+/* 2-Row Grid for Collections */
+.collections-grid-2row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px 20px;
+}
+@media (max-width: 1100px) {
+  .collections-grid-2row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (max-width: 900px) {
+  .collections-grid-2row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 600px) {
+  .collections-grid-2row {
+    grid-template-columns: 1fr;
+  }
 }

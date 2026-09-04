@@ -40,12 +40,12 @@ const getSectionLabels = (t: any): Record<string, string> => ({
 });
 
 const getCollections = (t: any) => [
-  { id: "living", number: "01", title: t.colLiving || "Living", items: t.colLivingItems || "Modular sofas · Marble-top coffee tables · Luxury TV consoles", specs: "Burma Teak / honed marble / natural boucle", price: "৳ 1,20,000", image: "/assets/collection-living.jpg", gallery: ["/assets/collection-living.jpg", "/assets/living2.jpg", "/assets/living3.jpg", "/assets/living4.jpg"], imageAlt: "Heaven Furniture Mart luxury carved sofa — Living collection" },
-  { id: "bedroom", number: "02", title: t.colBedroom || "Bedroom", items: t.colBedroomItems || "Upholstered beds · Custom wardrobes · Vanity dressers", specs: "Linen boucle / smoked oak / aged brass", price: "৳ 1,80,000", image: "/assets/collection-bedroom.jpg", gallery: ["/assets/collection-bedroom.jpg", "/assets/Bedroom2.jpg", "/assets/bed_1.jpg", "/assets/bed_2.jpg"], imageAlt: "Heaven Furniture Mart ornate carved bed — Bedroom collection" },
-  { id: "dining", number: "03", title: t.colDining || "Dining", items: t.colDiningItems || "Solid wood tables · Handcrafted chairs · Credenzas", specs: "Burma Teak / saddle leather / Studio Brass", price: "৳ 1,50,000", image: "/assets/collection-dining.jpg", gallery: ["/assets/collection-dining.jpg", "/assets/chair and table.jpg", "/assets/table_1.jpg"], imageAlt: "Heaven Furniture Mart marble top dining set — Dining collection" },
-  { id: "office", number: "04", title: t.colOffice || "Office & Executive", items: t.colOfficeItems || "Bespoke desks · Library walls · Conference tables", specs: "Smoked oak / Italian marble / brushed metal", price: "৳ 95,000", image: "/assets/collection-office.jpg", gallery: ["/assets/collection-office.jpg", "/assets/office2.jpg", "/assets/office3.jpg", "/assets/office4.jpg"], imageAlt: "Heaven Furniture Mart executive leather office chair — Office collection" },
-  { id: "outdoor", number: "05", title: t.colOutdoor || "Outdoor", items: t.colOutdoorItems || "Teak loungers · Stone tables · Weatherproof seating", specs: "Treated Teak / woven cord / performance fabric", price: "৳ 85,000", image: "placeholder", gallery: ["placeholder"], imageAlt: "Outdoor luxury furniture" },
-  { id: "lighting", number: "06", title: t.colLighting || "Lighting & Decor", items: t.colLightingItems || "Brass pendants · Sculptural lamps · Floor mirrors", specs: "Aged brass / hand-blown glass / solid oak", price: "৳ 25,000", image: "placeholder", gallery: ["placeholder"], imageAlt: "Luxury lighting and decor" },
+  { id: "living", category: "Seating", number: "01", title: t.colLiving || "Living", items: t.colLivingItems || "Modular sofas · Marble-top coffee tables · Luxury TV consoles", specs: "Burma Teak / honed marble / natural boucle", price: "৳ 1,20,000", image: "/assets/collection-living.jpg", gallery: ["/assets/collection-living.jpg", "/assets/living2.jpg", "/assets/living3.jpg", "/assets/living4.jpg", "/assets/modern sofa set.jpg", "/assets/Sofa.jpg"], imageAlt: "Heaven Furniture Mart luxury carved sofa — Living collection" },
+  { id: "bedroom", category: "Beds", number: "02", title: t.colBedroom || "Bedroom", items: t.colBedroomItems || "Upholstered beds · Custom wardrobes · Vanity dressers", specs: "Linen boucle / smoked oak / aged brass", price: "৳ 1,80,000", image: "/assets/collection-bedroom.jpg", gallery: ["/assets/collection-bedroom.jpg", "/assets/Bedroom2.jpg", "/assets/bed_1.jpg", "/assets/bed_2.jpg", "/assets/bed_3.jpg"], imageAlt: "Heaven Furniture Mart ornate carved bed — Bedroom collection" },
+  { id: "dining", category: "Dining", number: "03", title: t.colDining || "Dining", items: t.colDiningItems || "Solid wood tables · Handcrafted chairs · Credenzas", specs: "Burma Teak / saddle leather / Studio Brass", price: "৳ 1,50,000", image: "/assets/collection-dining.jpg", gallery: ["/assets/collection-dining.jpg", "/assets/chair and table.jpg", "/assets/table_1.jpg"], imageAlt: "Heaven Furniture Mart marble top dining set — Dining collection" },
+  { id: "office", category: "Workspace", number: "04", title: t.colOffice || "Office & Executive", items: t.colOfficeItems || "Bespoke desks · Library walls · Conference tables", specs: "Smoked oak / Italian marble / brushed metal", price: "৳ 95,000", image: "/assets/collection-office.jpg", gallery: ["/assets/collection-office.jpg", "/assets/office2.jpg", "/assets/office3.jpg", "/assets/office4.jpg", "/assets/office chair_1.jpg", "/assets/office_chair_2.jpg", "/assets/office chair_3.jpg"], imageAlt: "Heaven Furniture Mart executive leather office chair — Office collection" },
+  { id: "storage", category: "Storage", number: "05", title: "Storage & Wardrobes", items: "Bespoke Almirahs · Walk-in closets · Sideboards", specs: "Solid Teak / Brass Handles", price: "৳ 85,000", image: "/assets/Almirah.jpg", gallery: ["/assets/Almirah.jpg", "/assets/almirah_2.jpg"], imageAlt: "Luxury solid wood almirah" },
+  { id: "accent", category: "Seating", number: "06", title: "Accent Chairs", items: "Lounge chairs · Occasional seating", specs: "Premium Velvet / Walnut frame", price: "৳ 35,000", image: "/assets/full room.jpg", gallery: ["/assets/full room.jpg", "/assets/largeroom.jpg"], imageAlt: "Accent lounge chair" }
 ];
 
 // Framer Motion Variants
@@ -95,8 +95,16 @@ export default function Home() {
   const [trustSlide, setTrustSlide] = useState(0);
   const [contactSubmitted, setContactSubmitted] = useState(() => typeof window !== "undefined" && new URLSearchParams(window.location.search).get("contact") === "preview-success");
   const [contactErrors, setContactErrors] = useState<Record<string, string>>({});
-  const [showAllCollections, setShowAllCollections] = useState(false);
+  const [collectionFilter, setCollectionFilter] = useState("All");
+  const [collectionSearch, setCollectionSearch] = useState("");
   const collections = getCollections(t);
+  
+  const filteredCollections = collections.filter(c => {
+    if (collectionFilter !== "All" && c.category !== collectionFilter) return false;
+    if (collectionSearch.trim() && !c.title.toLowerCase().includes(collectionSearch.toLowerCase())) return false;
+    return true;
+  });
+  
   const materials = getMaterials(t);
   const sectionLabels = getSectionLabels(t);
 
@@ -437,7 +445,7 @@ export default function Home() {
             >
               <motion.div variants={fadeUpVariant} className="story-kicker"><span className="kicker-number">01</span><span className="kicker-line" /><span>{t.brandKicker}</span></motion.div>
               <motion.h2 variants={fadeUpVariant} className="story-title" id="brand-story-title">{t.brandTitle.split(' ')[0]} {t.brandTitle.split(' ')[1]}<br /><em>{t.brandTitle.split(' ').slice(2).join(' ')}</em></motion.h2>
-              <motion.blockquote variants={fadeUpVariant} className="founder-quote">{t.brandQuote}<cite>{t.brandQuoteAuthor}</cite></motion.blockquote>
+              <motion.blockquote variants={fadeUpVariant} className="founder-quote">{t.brandQuote}<span className="closing-quote">”</span><cite>{t.brandQuoteAuthor}</cite></motion.blockquote>
               <motion.div variants={fadeUpVariant} className="story-narrative"><span className="story-accent-line" aria-hidden="true" /><p>{t.brandDesc}</p></motion.div>
             </motion.div>
           </div>
@@ -523,35 +531,49 @@ export default function Home() {
             <p>{t.collectionDesc}</p>
           </div>
         </motion.div>
-        <div className="collections-scroller page-container" aria-label="Curated furniture collections">
-          {(showAllCollections ? collections : collections.slice(0, 4)).map((collection) => (
-            <motion.button variants={fadeUpVariant} className="collection-card" type="button" key={collection.id} onClick={() => { setSelectedCollection(collection); setLightboxIndex(0); }} aria-label={`Explore ${collection.title} collection`}>
-              <span className={`collection-image ${collection.image === "placeholder" ? `collection-placeholder placeholder-${collection.id}` : ""}`}>
-                {collection.image === "placeholder" ? (
-                  <>
-                    <span className="collection-placeholder-label">Photography placeholder</span>
-                  </>
-                ) : <img src={collection.image} alt={collection.imageAlt} />}
-                <span className="collection-overlay"><span>Explore category</span><ArrowUpRight size={16} strokeWidth={1.4} /></span>
-              </span>
-              <span className="collection-meta">
-                <span className="collection-title-row">
-                  <span className="collection-number">{collection.number}</span>
-                  <span className="collection-title">{collection.title}</span>
+        <motion.div variants={fadeUpVariant} className="page-container catalog-toolbar dynamic-scroller-toolbar" style={{ marginTop: '20px', marginBottom: '10px', borderBottom: 'none', paddingBottom: '0' }}>
+          <div className="catalog-search" style={{ marginLeft: 'auto' }}>
+            <input 
+              type="text" 
+              placeholder="Search catalog..." 
+              value={collectionSearch}
+              onChange={(e) => setCollectionSearch(e.target.value)}
+              style={{ width: '300px' }}
+            />
+          </div>
+        </motion.div>
+
+        <motion.div variants={fadeUpVariant} className="collections-grid-2row page-container" aria-label="Curated furniture collections">
+          <AnimatePresence mode="popLayout">
+            {filteredCollections.map((collection) => (
+              <motion.div 
+                layout
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.3 }}
+                className="collection-card" key={collection.id} aria-label={`${collection.title} collection`}
+                style={{ cursor: 'default' }}
+              >
+                <span className={`collection-image ${collection.image === "placeholder" ? `collection-placeholder placeholder-${collection.id}` : ""}`}>
+                  {collection.image === "placeholder" ? (
+                    <>
+                      <span className="collection-placeholder-label">Photography placeholder</span>
+                    </>
+                  ) : <img src={collection.image} alt={collection.imageAlt} />}
                 </span>
-                <span className="collection-price">Starts at {collection.price}</span>
-              </span>
-              <span className="collection-items">{collection.items}</span>
-            </motion.button>
-          ))}
-        </div>
-        {!showAllCollections && (
-          <motion.div variants={fadeUpVariant} className="page-container see-all-container" style={{ display: 'flex', justifyContent: 'center', marginTop: '40px' }}>
-            <button className="magnetic-button" style={{ background: 'var(--brass)', color: 'var(--teal-900)' }} type="button" onClick={() => setShowAllCollections(true)}>
-              <span>{t.btnSeeAll}</span>
-            </button>
-          </motion.div>
-        )}
+                <span className="collection-meta">
+                  <span className="collection-title-row">
+                    <span className="collection-number">{collection.number}</span>
+                    <span className="collection-title">{collection.title}</span>
+                  </span>
+                  <span className="collection-price">Starts at {collection.price}</span>
+                </span>
+                <span className="collection-items">{collection.items}</span>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </motion.div>
       </motion.section>
 
       <motion.section 

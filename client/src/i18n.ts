@@ -58,7 +58,7 @@ export const i18n = {
     // Brand Story
     brandKicker: "Brand story",
     brandTitle: "Furniture that holds your story.",
-    brandQuote: "“At Heaven Furniture Mart, we believe furniture is more than just function; it is a reflection of lifestyle, taste, and comfort.”",
+    brandQuote: "At Heaven Furniture Mart, we believe furniture is more than just function; it is a reflection of lifestyle, taste, and comfort.",
     brandQuoteAuthor: "— Abul Kalam Bhuiyan, Managing Director",
     brandDesc: "Since our founding in 2020 in Agrabad, Chattogram, our philosophy has remained simple: true luxury is personal. We reject mass-produced catalog items in favor of bespoke craftsmanship, ensuring every piece is tailored to your exact dimensions, lifestyle, and aesthetic.",
     brandLabel: "Master Artisans / 02",
@@ -287,7 +287,7 @@ export const i18n = {
     // Brand Story
     brandKicker: "ব্র্যান্ড স্টোরি",
     brandTitle: "যে আসবাব আপনার জীবনের গল্প বলে।",
-    brandQuote: "“হেভেন ফার্নিচার মার্ট-এ আমরা বিশ্বাস করি, আসবাব কেবল প্রয়োজনের জিনিস নয়; এটি আপনার জীবনধারা, রুচি ও স্বাচ্ছন্দ্যেরই এক প্রতিচ্ছবি।”",
+    brandQuote: "At Heaven Furniture Mart, we believe furniture is more than just function; it is a reflection of lifestyle, taste, and comfort.",
     brandQuoteAuthor: "— আবুল কালাম ভূঁইয়া, ম্যানেজিং ডিরেক্টর",
     brandDesc: "২০২০ সালে চট্টগ্রামের আগ্রাবাদে যাত্রা শুরুর পর থেকেই আমাদের মূল দর্শন এক ও অনন্য: আসল আভিজাত্য লুকিয়ে থাকে ব্যক্তিগত পছন্দের মাঝেই। আমরা গণহারে তৈরি পণ্যের পরিবর্তে প্রাধান্য দিই ঐতিহ্যবাহী কাস্টম কারুশিল্পকে, যাতে প্রতিটি আসবাব গড়ে ওঠে আপনার ঘরের নিখুঁত মাপ ও ব্যক্তিগত রুচি অনুযায়ী।",
     brandLabel: "মাস্টার আর্টিসান / ০২",
