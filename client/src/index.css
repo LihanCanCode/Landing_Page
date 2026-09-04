@@ -5575,3 +5575,31 @@ textarea:focus-visible {
     grid-template-columns: 1fr;
   }
 }
+
+/* Teal Outline Button with Shadow */
+.btn-teal-shadow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 32px;
+  border: 1px solid rgba(23, 35, 31, 0.4);
+  border-radius: 4px;
+  color: rgba(23, 35, 31, 0.4);
+  font-family: "Manrope", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-size: 11px;
+  font-weight: 700;
+  text-decoration: none;
+  background: transparent;
+  box-shadow: 0 4px 15px rgba(23, 35, 31, 0.08), 0 2px 4px rgba(23, 35, 31, 0.04);
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.btn-teal-shadow:hover {
+  background: var(--teal-900, #17231f);
+  color: var(--parchment, #efe8dc);
+  border-color: var(--teal-900, #17231f);
+  box-shadow: 0 8px 25px rgba(23, 35, 31, 0.25), 0 4px 10px rgba(23, 35, 31, 0.15);
+  transform: translateY(-3px);
+}

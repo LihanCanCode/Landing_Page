@@ -45,7 +45,9 @@ const getCollections = (t: any) => [
   { id: "dining", category: "Dining", number: "03", title: t.colDining || "Dining", items: t.colDiningItems || "Solid wood tables · Handcrafted chairs · Credenzas", specs: "Burma Teak / saddle leather / Studio Brass", price: "৳ 1,50,000", image: "/assets/collection-dining.jpg", gallery: ["/assets/collection-dining.jpg", "/assets/chair and table.jpg", "/assets/table_1.jpg"], imageAlt: "Heaven Furniture Mart marble top dining set — Dining collection" },
   { id: "office", category: "Workspace", number: "04", title: t.colOffice || "Office & Executive", items: t.colOfficeItems || "Bespoke desks · Library walls · Conference tables", specs: "Smoked oak / Italian marble / brushed metal", price: "৳ 95,000", image: "/assets/collection-office.jpg", gallery: ["/assets/collection-office.jpg", "/assets/office2.jpg", "/assets/office3.jpg", "/assets/office4.jpg", "/assets/office chair_1.jpg", "/assets/office_chair_2.jpg", "/assets/office chair_3.jpg"], imageAlt: "Heaven Furniture Mart executive leather office chair — Office collection" },
   { id: "storage", category: "Storage", number: "05", title: "Storage & Wardrobes", items: "Bespoke Almirahs · Walk-in closets · Sideboards", specs: "Solid Teak / Brass Handles", price: "৳ 85,000", image: "/assets/Almirah.jpg", gallery: ["/assets/Almirah.jpg", "/assets/almirah_2.jpg"], imageAlt: "Luxury solid wood almirah" },
-  { id: "accent", category: "Seating", number: "06", title: "Accent Chairs", items: "Lounge chairs · Occasional seating", specs: "Premium Velvet / Walnut frame", price: "৳ 35,000", image: "/assets/full room.jpg", gallery: ["/assets/full room.jpg", "/assets/largeroom.jpg"], imageAlt: "Accent lounge chair" }
+  { id: "accent", category: "Seating", number: "06", title: "Accent Chairs", items: "Lounge chairs · Occasional seating", specs: "Premium Velvet / Walnut frame", price: "৳ 35,000", image: "/assets/full room.jpg", gallery: ["/assets/full room.jpg", "/assets/largeroom.jpg"], imageAlt: "Accent lounge chair" },
+  { id: "decor", category: "Decor", number: "07", title: "Mirrors & Decor", items: "Statement mirrors · Wall accents · Decorative pieces", specs: "Bevelled glass / Brass frame", price: "৳ 25,000", image: "/assets/Mirror.jpg", gallery: ["/assets/Mirror.jpg", "/assets/mirror2.jpg"], imageAlt: "Ornate brass-framed mirror" },
+  { id: "others", category: "Others", number: "08", title: "Others", items: "Swings & jhulas · Specialty pieces · More on request", specs: "Mixed materials / Custom finishes", price: "Price on request", image: "/assets/dolna.jpg", gallery: ["/assets/dolna.jpg", "/assets/dolna 2.jpg"], imageAlt: "Custom furniture piece" }
 ];
 
 // Framer Motion Variants
@@ -151,6 +153,14 @@ export default function Home() {
     const timer = setInterval(() => {
       setHeroSlide(prev => (prev === 2 ? 0 : prev + 1));
     }, 6000);
+    return () => clearInterval(timer);
+  }, [prefersReducedMotion]);
+
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+    const timer = setInterval(() => {
+      setTrustSlide(prev => (prev === 2 ? 0 : prev + 1));
+    }, 5000);
     return () => clearInterval(timer);
   }, [prefersReducedMotion]);
 
@@ -546,14 +556,13 @@ export default function Home() {
         <motion.div variants={fadeUpVariant} className="collections-grid-2row page-container" aria-label="Curated furniture collections">
           <AnimatePresence mode="popLayout">
             {filteredCollections.map((collection) => (
-              <motion.div 
+              <motion.button 
                 layout
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.3 }}
-                className="collection-card" key={collection.id} aria-label={`${collection.title} collection`}
-                style={{ cursor: 'default' }}
+                className="collection-card" type="button" key={collection.id} onClick={() => { setSelectedCollection(collection); setLightboxIndex(0); }} aria-label={`Explore ${collection.title} collection`}
               >
                 <span className={`collection-image ${collection.image === "placeholder" ? `collection-placeholder placeholder-${collection.id}` : ""}`}>
                   {collection.image === "placeholder" ? (
@@ -561,6 +570,7 @@ export default function Home() {
                       <span className="collection-placeholder-label">Photography placeholder</span>
                     </>
                   ) : <img src={collection.image} alt={collection.imageAlt} />}
+                  <span className="collection-overlay"><span>Explore category</span><ArrowUpRight size={16} strokeWidth={1.4} /></span>
                 </span>
                 <span className="collection-meta">
                   <span className="collection-title-row">
@@ -570,9 +580,15 @@ export default function Home() {
                   <span className="collection-price">Starts at {collection.price}</span>
                 </span>
                 <span className="collection-items">{collection.items}</span>
-              </motion.div>
+              </motion.button>
             ))}
           </AnimatePresence>
+        </motion.div>
+        
+        <motion.div variants={fadeUpVariant} style={{ display: 'flex', justifyContent: 'center', marginTop: '60px' }}>
+          <a href="#materials-preview" className="btn-teal-shadow">
+            Choose your material <ArrowUpRight size={14} strokeWidth={1.5} />
+          </a>
         </motion.div>
       </motion.section>
 
@@ -691,76 +707,13 @@ export default function Home() {
               ))}
             </motion.div>
             <motion.div variants={fadeUpVariant} className="selected-material"><span>{t.materialSelected}</span><strong>{selectedMaterial.name}</strong><small>{selectedMaterial.detail}</small></motion.div>
-          </div>
-        </div>
-      </motion.section>
-
-      <motion.section 
-        className="estimator-section" 
-        id="estimator" 
-        aria-labelledby="estimator-title"
-        initial={prefersReducedMotion ? "show" : "hidden"}
-        whileInView="show"
-        viewport={{ once: true, margin: "-10%" }}
-        variants={staggerContainer}
-      >
-        <div className="page-container estimator-grid">
-          <div className="estimator-content">
-            <motion.div variants={fadeUpVariant} className="estimator-kicker"><span className="kicker-number">07</span><span className="kicker-line" /><span>{t.estimatorKicker}</span></motion.div>
-            <motion.h2 variants={fadeUpVariant} id="estimator-title">{t.estimatorTitle.split(' ')[0]}<br /><em>{t.estimatorTitle.split(' ').slice(1).join(' ')}</em></motion.h2>
-            <motion.p variants={fadeUpVariant}>{t.estimatorDesc}</motion.p>
             
-            <motion.div variants={fadeUpVariant} className="estimator-controls">
-              <div className="estimator-group">
-                <label>Room Type</label>
-                <div className="estimator-pills">
-                  {["Living", "Bedroom", "Dining"].map(room => (
-                    <button type="button" key={room} className={estRoom === room ? "active" : ""} onClick={() => setEstRoom(room)}>{room}</button>
-                  ))}
-                </div>
-              </div>
-              <div className="estimator-group">
-                <label>Primary Material</label>
-                <div className="estimator-pills">
-                  {["Teak", "Walnut", "Oak"].map(mat => (
-                    <button type="button" key={mat} className={estMaterial === mat ? "active" : ""} onClick={() => setEstMaterial(mat)}>{mat}</button>
-                  ))}
-                </div>
-              </div>
-              <div className="estimator-group">
-                <label>Room Scale</label>
-                <div className="estimator-range">
-                  <span className={estScale === 1 ? "active" : ""} onClick={() => setEstScale(1)}>Intimate</span>
-                  <input type="range" min="1" max="3" step="1" value={estScale} onChange={(e) => setEstScale(parseInt(e.target.value))} />
-                  <span className={estScale === 3 ? "active" : ""} onClick={() => setEstScale(3)}>Grand</span>
-                </div>
-              </div>
+            <motion.div variants={fadeUpVariant} style={{ marginTop: '50px' }}>
+              <a href="#ar-preview" className="btn-teal-shadow">
+                See it in your room <ArrowUpRight size={14} strokeWidth={1.5} />
+              </a>
             </motion.div>
           </div>
-          
-          <motion.div variants={fadeVariant} className="estimator-receipt" style={{ backgroundImage: `url('/assets/collection-${estRoom.toLowerCase()}.jpg')`, backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative', overflow: 'hidden' }}>
-            <div className="receipt-overlay" style={{ position: 'absolute', inset: 0, background: 'rgba(23, 35, 31, 0.75)', backdropFilter: 'blur(8px)', borderRadius: '4px' }} />
-            <div style={{ position: 'relative', zIndex: 1, width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
-              <div className="receipt-header">
-                <span>HEAVEN STUDIO</span>
-                <span>ESTIMATE</span>
-              </div>
-              <div className="receipt-body">
-                <div className="receipt-row"><span>Suite</span><span>{estRoom}</span></div>
-                <div className="receipt-row"><span>Material</span><span>{estMaterial}</span></div>
-                <div className="receipt-row"><span>Scale</span><span>{estScale === 1 ? "Intimate" : estScale === 2 ? "Standard" : "Grand"}</span></div>
-                <div className="receipt-divider" />
-                <div className="receipt-total">
-                  <span>{t.estTotal}</span>
-                  <strong>৳ {getEstimate()}</strong>
-                </div>
-                <p className="receipt-note">*Final cost depends on exact dimensions, fabric tiers, and custom modifications.</p>
-              </div>
-              <a className="receipt-export" href={`${getWhatsAppLink()}&text=Hello! I just used the Commission Blueprint on your website. I am interested in a ${estRoom} suite made of ${estMaterial} for a ${estScale === 1 ? "Intimate" : estScale === 2 ? "Standard" : "Grand"} room. The estimate was ৳${getEstimate()}. Can we discuss further?`} target="_blank" rel="noreferrer">
-                {t.estExport} <ArrowUpRight size={16} />
-              </a>
-            </div>
-          </motion.div>
         </div>
       </motion.section>
 
@@ -803,13 +756,80 @@ export default function Home() {
         </motion.div>
         <motion.div variants={fadeUpVariant} className="page-container trust-panel">
           <div className="trust-heading"><span className="showroom-eyebrow">Client stories</span><h3>Trust is<br /><em>felt.</em></h3><p>Verified homeowner stories and published project outcomes will live here once approved for release.</p></div>
-          <div className="trust-carousel" aria-label="Verified client story placeholder">
-            <div className="trust-track" style={{ transform: `translateX(-${trustSlide * 33.333}%)` }}>
-              <article className="trust-card trust-card-placeholder"><span className="trust-card-index">01 / STORIES</span><div className="trust-quote-mark">“</div><p>Verified client story placeholder</p><span className="trust-card-foot">Awaiting approved quote and attribution</span></article>
-              <article className="trust-card trust-card-placeholder"><span className="trust-card-index">02 / STORIES</span><div className="trust-quote-mark">“</div><p>Published project outcome placeholder</p><span className="trust-card-foot">Awaiting approved case study</span></article>
-              <article className="trust-card trust-card-placeholder"><span className="trust-card-index">03 / STORIES</span><div className="trust-quote-mark">“</div><p>Homeowner experience placeholder</p><span className="trust-card-foot">Awaiting verified attribution</span></article>
+          <div className="trust-carousel" aria-label="Verified client story placeholder" style={{ overflow: 'hidden' }}>
+            <div className="trust-track-fade" style={{ position: 'relative', width: '100%', minHeight: '400px', display: 'flex', alignItems: 'center' }}>
+              <AnimatePresence mode="wait">
+                {trustSlide === 0 && (
+                  <motion.article 
+                    key="0"
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -15 }}
+                    transition={{ duration: 0.6, ease: [0.25, 1, 0.5, 1] }}
+                    className="trust-card"
+                    style={{ position: 'absolute', width: '100%', left: 0, display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: '40px', alignItems: 'center', border: '1px solid rgba(183, 154, 107, 0.3)', padding: '40px', borderRadius: '8px', background: 'rgba(239, 232, 220, 0.02)' }}
+                  >
+                    <div className="trust-image-wrapper" style={{ width: '100%', aspectRatio: '4/5', overflow: 'hidden', borderRadius: '4px', border: '1px solid rgba(183, 154, 107, 0.2)' }}>
+                      <img src="/assets/full room.jpg" alt="Client Home" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </div>
+                    <div className="trust-text-content">
+                      <span className="trust-card-index">01 / STORIES</span>
+                      <div className="trust-quote-mark" style={{ color: '#b79a6b', fontFamily: '"Cormorant Garamond", serif', fontSize: '60px', lineHeight: 0, marginTop: '20px', marginBottom: '20px' }}>“</div>
+                      <p style={{ fontSize: 'clamp(20px, 2.2vw, 36px)', fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', color: 'var(--parchment)', marginBottom: '30px', position: 'relative' }}>
+                        The attention to detail is staggering. Heaven Furniture didn't just fill our home; they understood our lifestyle and crafted pieces that will last for generations.<span style={{ color: '#b79a6b' }}>”</span>
+                      </p>
+                      <span className="trust-card-foot" style={{ display: 'block', marginTop: '20px' }}>— Farah M., Gulshan Residence</span>
+                    </div>
+                  </motion.article>
+                )}
+                {trustSlide === 1 && (
+                  <motion.article 
+                    key="1"
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -15 }}
+                    transition={{ duration: 0.6, ease: [0.25, 1, 0.5, 1] }}
+                    className="trust-card"
+                    style={{ position: 'absolute', width: '100%', left: 0, display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: '40px', alignItems: 'center', border: '1px solid rgba(183, 154, 107, 0.3)', padding: '40px', borderRadius: '8px', background: 'rgba(239, 232, 220, 0.02)' }}
+                  >
+                    <div className="trust-image-wrapper" style={{ width: '100%', aspectRatio: '4/5', overflow: 'hidden', borderRadius: '4px', border: '1px solid rgba(183, 154, 107, 0.2)' }}>
+                      <img src="/assets/largeroom.jpg" alt="Client Home" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </div>
+                    <div className="trust-text-content">
+                      <span className="trust-card-index">02 / STORIES</span>
+                      <div className="trust-quote-mark" style={{ color: '#b79a6b', fontFamily: '"Cormorant Garamond", serif', fontSize: '60px', lineHeight: 0, marginTop: '20px', marginBottom: '20px' }}>“</div>
+                      <p style={{ fontSize: 'clamp(20px, 2.2vw, 36px)', fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', color: 'var(--parchment)', marginBottom: '30px', position: 'relative' }}>
+                        From the first sketch to the final installation, their artisans showed an unmatched level of dedication. The custom teak dining table is the absolute heart of our home.<span style={{ color: '#b79a6b' }}>”</span>
+                      </p>
+                      <span className="trust-card-foot" style={{ display: 'block', marginTop: '20px' }}>— Kamaluddin H., Banani Penthouse</span>
+                    </div>
+                  </motion.article>
+                )}
+                {trustSlide === 2 && (
+                  <motion.article 
+                    key="2"
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -15 }}
+                    transition={{ duration: 0.6, ease: [0.25, 1, 0.5, 1] }}
+                    className="trust-card"
+                    style={{ position: 'absolute', width: '100%', left: 0, display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: '40px', alignItems: 'center', border: '1px solid rgba(183, 154, 107, 0.3)', padding: '40px', borderRadius: '8px', background: 'rgba(239, 232, 220, 0.02)' }}
+                  >
+                    <div className="trust-image-wrapper" style={{ width: '100%', aspectRatio: '4/5', overflow: 'hidden', borderRadius: '4px', border: '1px solid rgba(183, 154, 107, 0.2)' }}>
+                      <img src="/assets/Bedroom2.jpg" alt="Client Home" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </div>
+                    <div className="trust-text-content">
+                      <span className="trust-card-index">03 / STORIES</span>
+                      <div className="trust-quote-mark" style={{ color: '#b79a6b', fontFamily: '"Cormorant Garamond", serif', fontSize: '60px', lineHeight: 0, marginTop: '20px', marginBottom: '20px' }}>“</div>
+                      <p style={{ fontSize: 'clamp(20px, 2.2vw, 36px)', fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', color: 'var(--parchment)', marginBottom: '30px', position: 'relative' }}>
+                        Walking into my new executive suite feels like entering a sanctuary. The bespoke mahogany desk and shelving are nothing short of architectural masterpieces.<span style={{ color: '#b79a6b' }}>”</span>
+                      </p>
+                      <span className="trust-card-foot" style={{ display: 'block', marginTop: '20px' }}>— Architect S. Rahman, Agrabad Suite</span>
+                    </div>
+                  </motion.article>
+                )}
+              </AnimatePresence>
             </div>
-            <div className="trust-controls"><button type="button" aria-label="Previous client story" onClick={() => setTrustSlide((slide) => slide === 0 ? 2 : slide - 1)}><ArrowLeft size={15} /></button><span>{String(trustSlide + 1).padStart(2, "0")} — 03</span><button type="button" aria-label="Next client story" onClick={() => setTrustSlide((slide) => slide === 2 ? 0 : slide + 1)}><ArrowRight size={15} /></button></div>
           </div>
         </motion.div>
       </motion.section>
@@ -894,7 +914,7 @@ export default function Home() {
                   </div>
                 )}
               </div>
-              <div className="lightbox-copy"><p className="section-eyebrow">Collection / {selectedCollection.number}</p><h2 id="collection-lightbox-title">{selectedCollection.title}<br /><em>in focus.</em></h2><p>{selectedCollection.items}</p><div className="spec-row"><span>Material study</span><strong>{selectedCollection.specs}</strong></div></div>
+              <div className="lightbox-copy"><p className="section-eyebrow">Collection / {selectedCollection.number}</p><h2 id="collection-lightbox-title">{selectedCollection.title}<br /><em>in focus.</em></h2><p>{selectedCollection.items}</p><div className="spec-row"><span>Material study</span><strong>{selectedCollection.specs}</strong></div><div className="spec-row" style={{ marginTop: '15px' }}><span>{t.collectionStarts}</span><strong>{selectedCollection.price}</strong></div></div>
             </motion.div>
           </motion.div>
         )}
