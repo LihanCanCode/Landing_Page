@@ -310,7 +310,11 @@ export default function Home() {
       }
     };
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "";
+    };
   }, [quoteOpen, selectedCollection]);
 
   const handleStageMove = (event: React.PointerEvent<HTMLDivElement>) => {
@@ -1063,7 +1067,7 @@ export default function Home() {
                   </div>
                 )}
               </div>
-              <div className="lightbox-copy"><p className="section-eyebrow">Collection / {selectedCollection.number}</p><h2 id="collection-lightbox-title">{selectedCollection.title}<br /><em>in focus.</em></h2><p>{selectedCollection.items}</p><div className="spec-row"><span>Material study</span><strong>{selectedCollection.specs}</strong></div><div className="spec-row" style={{ marginTop: '15px' }}><span>{t.collectionStarts}</span><strong>{selectedCollection.price}</strong></div></div>
+              <div className="lightbox-copy"><p className="section-eyebrow">Collection / {selectedCollection.number}</p><h2 id="collection-lightbox-title">{selectedCollection.title}<br /><em>in focus.</em></h2><p>{selectedCollection.items}</p><div className="spec-row"><span>Material study</span><strong>{selectedCollection.specs}</strong></div><div className="spec-row" style={{ marginTop: '15px' }}><span>{t.collectionStarts}</span><strong>{selectedCollection.price}</strong></div><a className="lightbox-whatsapp" href={getWhatsAppLink(`Hi, I'm interested in the ${selectedCollection.title} collection.`)} target="_blank" rel="noreferrer"><MessageCircle size={16} strokeWidth={1.6} />Ask in WhatsApp</a></div>
             </motion.div>
           </motion.div>
         )}
