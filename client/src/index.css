@@ -145,24 +145,6 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-html::-webkit-scrollbar {
-  width: 12px;
-}
-
-html::-webkit-scrollbar-track {
-  background: var(--teal-900);
-}
-
-html::-webkit-scrollbar-thumb {
-  background-color: rgba(183, 154, 107, 0.55);
-  border-radius: 999px;
-  border: 3px solid var(--teal-900);
-}
-
-html::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(183, 154, 107, 0.8);
-}
-
 button,
 a,
 input,
@@ -2627,6 +2609,10 @@ textarea:focus-visible {
   isolation: isolate;
 }
 
+.material-preview-cta {
+  grid-column: 2 / 3;
+}
+
 .material-surface,
 .material-stage-grid,
 .material-stage-glow,
@@ -4445,6 +4431,7 @@ textarea:focus-visible {
   .material-preview-stage {
     width: calc(100% - 10px);
     min-height: min(120vw, 470px);
+    order: 2;
   }
 
   .material-sphere {
@@ -4456,6 +4443,12 @@ textarea:focus-visible {
   .material-preview-controls {
     width: 100%;
     padding-top: 0;
+    order: 1;
+  }
+
+  .material-preview-cta {
+    grid-column: auto;
+    order: 3;
   }
 
   .material-preview-controls h2 {
@@ -6280,9 +6273,9 @@ textarea:focus-visible {
   align-items: center;
   gap: 10px;
   padding: 16px 32px;
-  border: 1px solid rgba(23, 35, 31, 0.4);
+  border: 1px solid rgba(23, 35, 31, 0.75);
   border-radius: 4px;
-  color: rgba(23, 35, 31, 0.4);
+  color: rgba(23, 35, 31, 0.85);
   font-family: "Manrope", sans-serif;
   text-transform: uppercase;
   letter-spacing: 0.15em;

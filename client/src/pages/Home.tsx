@@ -848,13 +848,12 @@ export default function Home() {
               ))}
             </motion.div>
             <motion.div variants={fadeUpVariant} className="selected-material"><span>{t.materialSelected}</span><strong>{selectedMaterial.name}</strong><small>{selectedMaterial.detail}</small></motion.div>
-
-            <motion.div variants={fadeUpVariant} style={{ marginTop: '50px' }}>
-              <a href="#ar-preview" className="btn-teal-shadow">
-                See it in your room <ArrowUpRight size={14} strokeWidth={1.5} />
-              </a>
-            </motion.div>
           </div>
+          <motion.div variants={fadeUpVariant} className="material-preview-cta" style={{ marginTop: '50px' }}>
+            <a href="#ar-preview" className="btn-teal-shadow">
+              See it in your room <ArrowUpRight size={14} strokeWidth={1.5} />
+            </a>
+          </motion.div>
         </div>
       </motion.section>
 
