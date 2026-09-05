@@ -132,7 +132,12 @@ html {
   scroll-behavior: smooth;
   background: var(--teal-900);
   color-scheme: dark;
-  scrollbar-color: rgba(183, 154, 107, 0.55) var(--teal-900);
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar {
+  display: none;
 }
 
 body {
@@ -143,6 +148,12 @@ body {
   font-family: "Manrope", sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+body::-webkit-scrollbar {
+  display: none;
 }
 
 button,
@@ -3128,10 +3139,43 @@ textarea:focus-visible {
 
 .showroom-poster {
   position: relative;
+  display: block;
+  width: 100%;
   min-height: 510px;
   background-position: center;
   background-size: cover;
   filter: saturate(0.72) brightness(0.65);
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: filter 0.4s var(--ease-out, ease);
+}
+
+.showroom-poster:hover {
+  filter: saturate(0.85) brightness(0.72);
+}
+
+.showroom-poster-video {
+  cursor: default;
+  filter: none;
+  background-image: none !important;
+  padding: 0;
+}
+
+.showroom-poster-video:hover {
+  filter: none;
+}
+
+.showroom-video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 510px;
+  object-fit: cover;
+  background: #000;
 }
 
 .showroom-wash {

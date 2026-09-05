@@ -105,6 +105,7 @@ export default function Home() {
   const [quoteOpen, setQuoteOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [trustSlide, setTrustSlide] = useState(0);
+  const [isStudioPlaying, setIsStudioPlaying] = useState(false);
   const [contactSubmitted, setContactSubmitted] = useState(() => typeof window !== "undefined" && new URLSearchParams(window.location.search).get("contact") === "preview-success");
   const [contactErrors, setContactErrors] = useState<Record<string, string>>({});
   const [collectionFilter, setCollectionFilter] = useState("All");
@@ -873,7 +874,28 @@ export default function Home() {
         </motion.div>
         <motion.div variants={fadeUpVariant} className="page-container showroom-panel">
           <div className="showroom-film">
-            <div className="showroom-poster" style={{ backgroundImage: `url(${heroRoom})` }} role="img" aria-label="Placeholder poster for the Agrabad Experience Studio video"><div className="showroom-wash" /><div className="showroom-film-label"><span>Showroom film / coming soon</span><strong>Agrabad Experience Studio</strong></div><div className="showroom-play"><Play size={17} fill="currentColor" strokeWidth={1.2} /></div></div>
+            {isStudioPlaying ? (
+              <div className="showroom-poster showroom-poster-video">
+                <video
+                  className="showroom-video"
+                  src="/assets/studio.mp4"
+                  controls
+                  autoPlay
+                  playsInline
+                  preload="none"
+                />
+              </div>
+            ) : (
+              <button
+                type="button"
+                className="showroom-poster"
+                style={{ backgroundImage: `url(${heroRoom})` }}
+                aria-label="Play the Agrabad Experience Studio video"
+                onClick={() => setIsStudioPlaying(true)}
+              >
+                <div className="showroom-wash" /><div className="showroom-film-label"><span>Showroom film</span><strong>Agrabad Experience Studio</strong></div><div className="showroom-play"><Play size={17} fill="currentColor" strokeWidth={1.2} /></div>
+              </button>
+            )}
             <div className="showroom-caption"><span>Textures in person. Joinery under your hand.</span><span>Heaven / 006</span></div>
           </div>
           <div className="showroom-copy"><span className="showroom-eyebrow">{t.experienceKicker}</span><h3>{t.experienceTitle.split(' ').slice(0, -2).join(' ')}<br /><em>{t.experienceTitle.split(' ').slice(-2).join(' ')}</em></h3><p>{t.experienceDesc}</p><a className="directions-button" href="https://www.google.com/maps/search/?api=1&query=Agrabad%20Chattogram" target="_blank" rel="noreferrer"><MapPin size={15} strokeWidth={1.4} />{t.experienceBtn} <ArrowUpRight size={14} strokeWidth={1.4} /></a></div>
