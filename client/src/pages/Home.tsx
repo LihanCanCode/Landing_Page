@@ -92,7 +92,7 @@ const awardVariant: Variants = {
 
 export default function Home() {
   const prefersReducedMotion = useReducedMotion();
-  const [lang, setLang] = useState<'en'|'bn'>('en');
+  const [lang, setLang] = useState<'en' | 'bn'>('en');
   const t = i18n[lang];
   const [isReady, setIsReady] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -110,13 +110,17 @@ export default function Home() {
   const [collectionFilter, setCollectionFilter] = useState("All");
   const [collectionSearch, setCollectionSearch] = useState("");
   const collections = getCollections(t);
-  
+
   const filteredCollections = collections.filter(c => {
     if (collectionFilter !== "All" && c.category !== collectionFilter) return false;
     if (collectionSearch.trim() && !c.title.toLowerCase().includes(collectionSearch.toLowerCase())) return false;
     return true;
   });
-  
+
+  const [catalogSlide, setCatalogSlide] = useState(0);
+  const catalogGridRef = useRef<HTMLDivElement>(null);
+  const catalogScrollTimeout = useRef<number | null>(null);
+
   const materials = getMaterials(t);
   const sectionLabels = getSectionLabels(t);
 
@@ -131,14 +135,17 @@ export default function Home() {
   const [isNightMode, setIsNightMode] = useState(false);
   const [isXrayMode, setIsXrayMode] = useState(false);
   const [heroSlide, setHeroSlide] = useState(0);
-  
+  const [valueSlide, setValueSlide] = useState(0);
+  const valueMatrixRef = useRef<HTMLDivElement>(null);
+  const valueScrollTimeout = useRef<number | null>(null);
+
   const roomVideos = [
     "/assets/premium furnitures - Trim.mp4",
     "/assets/premium room.mp4",
     "/assets/premium office.mp4"
   ];
   const [roomVideoIdx, setRoomVideoIdx] = useState(0);
-  
+
   const stageRef = useRef<HTMLDivElement>(null);
   const quoteButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -165,6 +172,85 @@ export default function Home() {
     }, 6000);
     return () => clearInterval(timer);
   }, [prefersReducedMotion]);
+
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+    const timer = setInterval(() => {
+      setValueSlide(prev => (prev === 5 ? 0 : prev + 1));
+    }, 3500);
+    return () => clearInterval(timer);
+  }, [prefersReducedMotion]);
+
+  useEffect(() => {
+    const container = valueMatrixRef.current;
+    const card = container?.children[valueSlide] as HTMLElement | undefined;
+    if (!container || !card) return;
+    container.scrollTo({ left: card.offsetLeft, behavior: prefersReducedMotion ? "auto" : "smooth" });
+  }, [valueSlide, prefersReducedMotion]);
+
+  const handleValueScroll = () => {
+    const container = valueMatrixRef.current;
+    if (!container) return;
+    if (valueScrollTimeout.current) window.clearTimeout(valueScrollTimeout.current);
+    valueScrollTimeout.current = window.setTimeout(() => {
+      const containerRect = container.getBoundingClientRect();
+      let closest = 0;
+      let closestDist = Infinity;
+      Array.from(container.children).forEach((child, idx) => {
+        const dist = Math.abs(child.getBoundingClientRect().left - containerRect.left);
+        if (dist < closestDist) {
+          closestDist = dist;
+          closest = idx;
+        }
+      });
+      setValueSlide(closest);
+    }, 120);
+  };
+
+  useEffect(() => {
+    setCatalogSlide(0);
+  }, [filteredCollections.length]);
+
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+    if (filteredCollections.length <= 1) return;
+    const timer = setInterval(() => {
+      setCatalogSlide(prev => (prev === filteredCollections.length - 1 ? 0 : prev + 1));
+    }, 3500);
+    return () => clearInterval(timer);
+  }, [prefersReducedMotion, filteredCollections.length]);
+
+  useEffect(() => {
+    const container = catalogGridRef.current;
+    const card = container?.children[catalogSlide] as HTMLElement | undefined;
+    if (!container || !card) return;
+    container.scrollTo({ left: card.offsetLeft, behavior: prefersReducedMotion ? "auto" : "smooth" });
+  }, [catalogSlide, prefersReducedMotion]);
+
+  useEffect(() => {
+    const container = catalogGridRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      if (catalogScrollTimeout.current) window.clearTimeout(catalogScrollTimeout.current);
+      catalogScrollTimeout.current = window.setTimeout(() => {
+        const containerRect = container.getBoundingClientRect();
+        let closest = 0;
+        let closestDist = Infinity;
+        Array.from(container.children).forEach((child, idx) => {
+          const dist = Math.abs(child.getBoundingClientRect().left - containerRect.left);
+          if (dist < closestDist) {
+            closestDist = dist;
+            closest = idx;
+          }
+        });
+        setCatalogSlide(closest);
+      }, 120);
+    };
+
+    container.addEventListener("scroll", handleScroll, { passive: true });
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     if (prefersReducedMotion) return;
@@ -198,7 +284,7 @@ export default function Home() {
     window.addEventListener("scroll", updatePageChrome, { passive: true });
     window.addEventListener("resize", updatePageChrome);
     window.addEventListener("mousemove", handleMouseMove, { passive: true });
-    
+
     return () => {
       window.removeEventListener("scroll", updatePageChrome);
       window.removeEventListener("resize", updatePageChrome);
@@ -331,7 +417,7 @@ export default function Home() {
         <span className="page-loader-year">Chattogram · 2026</span>
       </div>
       <div className="scroll-progress" aria-hidden="true" />
-      
+
       <div className="sticky-header-wrapper">
         <header className="site-header page-container">
           <a className="brand-lockup" href="#top" aria-label="Heaven Furniture Mart home">
@@ -386,9 +472,9 @@ export default function Home() {
             <div className="visual-topline" aria-hidden="true"><span>Room study / 01</span><span>29° 51' N / 91° 52' E</span></div>
             <div className={`room-frame ${isNightMode ? 'night-mode' : ''}`}>
               <div className="room-media">
-                <img src="/assets/hero1.png" alt="Executive Lounge in dark teal" className={`hero-slide-img ${heroSlide === 0 ? 'is-active' : ''}`} />
-                <img src="/assets/hero2.png" alt="Atelier Dining Room in charcoal slate" className={`hero-slide-img ${heroSlide === 1 ? 'is-active' : ''}`} />
-                <img src="/assets/hero3.png" alt="Sanctuary Bedroom with ambient lighting" className={`hero-slide-img ${heroSlide === 2 ? 'is-active' : ''}`} />
+                <img src="/assets/hero_luxury_showroom.png" alt="Executive Lounge in dark teal" className={`hero-slide-img ${heroSlide === 0 ? 'is-active' : ''}`} />
+                <img src="/assets/brand-story-main.png" alt="Atelier Dining Room in charcoal slate" className={`hero-slide-img ${heroSlide === 1 ? 'is-active' : ''}`} />
+                <img src="/assets/hero-bed.jpg" alt="Sanctuary Bedroom with ambient lighting" className={`hero-slide-img ${heroSlide === 2 ? 'is-active' : ''}`} />
                 <div className="room-wash" aria-hidden="true" />
                 <div className="light-leak" aria-hidden="true" />
                 <div className="night-overlay" aria-hidden="true" />
@@ -420,9 +506,9 @@ export default function Home() {
         </div>
       </div>
 
-      <motion.section 
-        className="brand-story-section option-c-split" 
-        id="story" 
+      <motion.section
+        className="brand-story-section option-c-split"
+        id="story"
         aria-labelledby="brand-story-title"
       >
         <div className="page-container split-story-container">
@@ -433,12 +519,12 @@ export default function Home() {
               </video>
               <div className="gallery-caption"><span>Atelier crafting / 01</span><strong>Master Artisans</strong></div>
             </div>
-            
+
             <div className="gallery-item video-carousel-wrapper">
-              <video 
-                autoPlay 
-                muted 
-                playsInline 
+              <video
+                autoPlay
+                muted
+                playsInline
                 className="gallery-video"
                 src={roomVideos[roomVideoIdx]}
                 onEnded={() => setRoomVideoIdx((prev) => (prev + 1) % roomVideos.length)}
@@ -456,11 +542,11 @@ export default function Home() {
                 </button>
               </div>
             </div>
-            <motion.div 
+            <motion.div
               initial={prefersReducedMotion ? "show" : "hidden"}
               whileInView="show"
               viewport={{ once: true, margin: "-10%" }}
-              variants={fadeUpVariant} 
+              variants={fadeUpVariant}
               style={{ display: 'flex', justifyContent: 'center', marginTop: '60px' }}
             >
               <a href="#collections" className="btn-teal-shadow">
@@ -470,7 +556,7 @@ export default function Home() {
           </div>
 
           <div className="split-story-sticky">
-            <motion.div 
+            <motion.div
               initial={prefersReducedMotion ? "show" : "hidden"}
               whileInView="show"
               viewport={{ once: true, margin: "-10%" }}
@@ -486,9 +572,9 @@ export default function Home() {
         </div>
       </motion.section>
 
-      <motion.section 
-        className="value-section" 
-        id="why-custom" 
+      <motion.section
+        className="value-section"
+        id="why-custom"
         aria-labelledby="value-title"
         initial={prefersReducedMotion ? "show" : "hidden"}
         whileInView="show"
@@ -503,7 +589,7 @@ export default function Home() {
             <p>{t.valueDesc}</p>
           </div>
         </motion.div>
-        <div className="page-container value-matrix">
+        <div className="page-container value-matrix" ref={valueMatrixRef} onScroll={handleValueScroll}>
           <motion.article variants={fadeUpVariant} className="value-card">
             <div className="value-swatch swatch-oak" role="img" aria-label="Placeholder for a natural wood furniture detail"><span>SWATCH / 01</span></div>
             <div className="value-card-index">01</div>
@@ -547,11 +633,24 @@ export default function Home() {
             <span className="card-arrow"><ArrowUpRight size={16} strokeWidth={1.5} /></span>
           </motion.article>
         </div>
+        <div className="value-dots" role="tablist" aria-label="Heaven Standard slides">
+          {[0, 1, 2, 3, 4, 5].map((idx) => (
+            <button
+              key={idx}
+              type="button"
+              role="tab"
+              aria-selected={valueSlide === idx}
+              aria-label={`Show standard ${idx + 1}`}
+              className={`value-dot ${valueSlide === idx ? "is-active" : ""}`}
+              onClick={() => setValueSlide(idx)}
+            />
+          ))}
+        </div>
       </motion.section>
 
-      <motion.section 
-        className="collections-section" 
-        id="collections" 
+      <motion.section
+        className="collections-section"
+        id="collections"
         aria-labelledby="collections-title"
         initial={prefersReducedMotion ? "show" : "hidden"}
         whileInView="show"
@@ -567,9 +666,9 @@ export default function Home() {
         </motion.div>
         <motion.div variants={fadeUpVariant} className="page-container catalog-toolbar dynamic-scroller-toolbar" style={{ marginTop: '20px', marginBottom: '10px', borderBottom: 'none', paddingBottom: '0' }}>
           <div className="catalog-search" style={{ marginLeft: 'auto' }}>
-            <input 
-              type="text" 
-              placeholder="Search catalog..." 
+            <input
+              type="text"
+              placeholder="Search catalog..."
               value={collectionSearch}
               onChange={(e) => setCollectionSearch(e.target.value)}
               style={{ width: '300px' }}
@@ -577,10 +676,10 @@ export default function Home() {
           </div>
         </motion.div>
 
-        <motion.div variants={fadeUpVariant} className="collections-grid-2row page-container" aria-label="Curated furniture collections">
+        <motion.div variants={fadeUpVariant} className="collections-grid-2row page-container" aria-label="Curated furniture collections" ref={catalogGridRef}>
           <AnimatePresence mode="popLayout">
             {filteredCollections.map((collection) => (
-              <motion.button 
+              <motion.button
                 layout
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -608,7 +707,21 @@ export default function Home() {
             ))}
           </AnimatePresence>
         </motion.div>
-        
+
+        <div className="collections-dots" role="tablist" aria-label="Collection slides">
+          {filteredCollections.map((collection, idx) => (
+            <button
+              key={collection.id}
+              type="button"
+              role="tab"
+              aria-selected={catalogSlide === idx}
+              aria-label={`Show ${collection.title} collection`}
+              className={`collections-dot ${catalogSlide === idx ? "is-active" : ""}`}
+              onClick={() => setCatalogSlide(idx)}
+            />
+          ))}
+        </div>
+
         <motion.div variants={fadeUpVariant} style={{ display: 'flex', justifyContent: 'center', marginTop: '60px' }}>
           <a href="#materials-preview" className="btn-teal-shadow">
             Choose your material <ArrowUpRight size={14} strokeWidth={1.5} />
@@ -616,9 +729,9 @@ export default function Home() {
         </motion.div>
       </motion.section>
 
-      <motion.section 
-        className="portfolio-section" 
-        id="portfolio" 
+      <motion.section
+        className="portfolio-section"
+        id="portfolio"
         aria-labelledby="portfolio-title"
         initial={prefersReducedMotion ? "show" : "hidden"}
         whileInView="show"
@@ -657,9 +770,9 @@ export default function Home() {
         </div>
       </motion.section>
 
-      <motion.section 
-        className="journey-section" 
-        id="journey" 
+      <motion.section
+        className="journey-section"
+        id="journey"
         aria-labelledby="journey-title"
         initial={prefersReducedMotion ? "show" : "hidden"}
         whileInView="show"
@@ -680,9 +793,9 @@ export default function Home() {
         </div>
       </motion.section>
 
-      <motion.section 
-        className="material-preview-section" 
-        id="materials-preview" 
+      <motion.section
+        className="material-preview-section"
+        id="materials-preview"
         aria-labelledby="materials-preview-title"
         initial={prefersReducedMotion ? "show" : "hidden"}
         whileInView="show"
@@ -731,7 +844,7 @@ export default function Home() {
               ))}
             </motion.div>
             <motion.div variants={fadeUpVariant} className="selected-material"><span>{t.materialSelected}</span><strong>{selectedMaterial.name}</strong><small>{selectedMaterial.detail}</small></motion.div>
-            
+
             <motion.div variants={fadeUpVariant} style={{ marginTop: '50px' }}>
               <a href="#ar-preview" className="btn-teal-shadow">
                 See it in your room <ArrowUpRight size={14} strokeWidth={1.5} />
@@ -741,9 +854,9 @@ export default function Home() {
         </div>
       </motion.section>
 
-      <motion.section 
-        className="experience-section" 
-        id="experience" 
+      <motion.section
+        className="experience-section"
+        id="experience"
         aria-labelledby="experience-title"
         initial={prefersReducedMotion ? "show" : "hidden"}
         whileInView="show"
@@ -766,8 +879,8 @@ export default function Home() {
           <div className="credibility-intro">
             <div><span className="showroom-eyebrow">{t.credibilityKicker}</span><h3>{t.credibilityTitle.split(' ')[0]}<br /><em>{t.credibilityTitle.split(' ').slice(1).join(' ')}</em></h3></div>
           </div>
-          <motion.div 
-            className="timeline-track" 
+          <motion.div
+            className="timeline-track"
             aria-label="Heaven Furniture Mart milestone timeline"
             initial="hidden"
             whileInView="show"
@@ -796,7 +909,7 @@ export default function Home() {
             <div className="trust-track-fade" style={{ position: 'relative', width: '100%', minHeight: '400px', display: 'flex', alignItems: 'center' }}>
               <AnimatePresence mode="wait">
                 {trustSlide === 0 && (
-                  <motion.article 
+                  <motion.article
                     key="0"
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -819,7 +932,7 @@ export default function Home() {
                   </motion.article>
                 )}
                 {trustSlide === 1 && (
-                  <motion.article 
+                  <motion.article
                     key="1"
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -842,7 +955,7 @@ export default function Home() {
                   </motion.article>
                 )}
                 {trustSlide === 2 && (
-                  <motion.article 
+                  <motion.article
                     key="2"
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -876,7 +989,7 @@ export default function Home() {
 
       <motion.section
         className="contact-section"
-        id="contact" 
+        id="contact"
         aria-labelledby="contact-title"
         initial={prefersReducedMotion ? "show" : "hidden"}
         whileInView="show"
@@ -908,19 +1021,19 @@ export default function Home() {
 
       <AnimatePresence>
         {selectedCollection && (
-          <motion.div 
-            className="lightbox-backdrop" 
-            role="presentation" 
+          <motion.div
+            className="lightbox-backdrop"
+            role="presentation"
             onMouseDown={() => setSelectedCollection(null)}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <motion.div 
-              className="collection-lightbox" 
-              role="dialog" 
-              aria-modal="true" 
-              aria-labelledby="collection-lightbox-title" 
+            <motion.div
+              className="collection-lightbox"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="collection-lightbox-title"
               onMouseDown={(event) => event.stopPropagation()}
               variants={modalVariant}
               initial="hidden"
@@ -930,7 +1043,7 @@ export default function Home() {
               <button className="modal-close lightbox-close" type="button" aria-label="Close collection details" onClick={() => setSelectedCollection(null)}><X size={21} /></button>
               <div className={`lightbox-visual ${selectedCollection.image === "placeholder" ? `collection-placeholder placeholder-${selectedCollection.id}` : ""}`}>
                 {selectedCollection.image === "placeholder" ? <span className="collection-placeholder-label">Photography placeholder</span> : <img src={selectedCollection.gallery[lightboxIndex]} alt={selectedCollection.imageAlt} className={isXrayMode ? 'xray-active' : ''} />}
-                
+
                 {isXrayMode && (
                   <div className="xray-overlay">
                     <div className="xray-point pt-1"><span>01 / FRAME</span><strong>Kiln-Dried Hardwood</strong></div>
@@ -938,7 +1051,7 @@ export default function Home() {
                     <div className="xray-point pt-3"><span>03 / FINISH</span><strong>Hand-Stitched Seams</strong></div>
                   </div>
                 )}
-                
+
                 <button className="xray-toggle" onClick={(e) => { e.stopPropagation(); setIsXrayMode(!isXrayMode); }}>
                   {isXrayMode ? 'Close X-Ray' : 'View Anatomy'}
                 </button>
@@ -958,19 +1071,19 @@ export default function Home() {
 
       <AnimatePresence>
         {quoteOpen && (
-          <motion.div 
-            className="modal-backdrop" 
-            role="presentation" 
+          <motion.div
+            className="modal-backdrop"
+            role="presentation"
             onMouseDown={closeQuote}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <motion.div 
-              className="quote-modal" 
-              role="dialog" 
-              aria-modal="true" 
-              aria-labelledby="quote-title" 
+            <motion.div
+              className="quote-modal"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="quote-title"
               onMouseDown={(event) => event.stopPropagation()}
               variants={modalVariant}
               initial="hidden"

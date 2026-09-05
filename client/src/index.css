@@ -1630,6 +1630,10 @@ textarea:focus-visible {
   border-left: 1px solid rgba(239, 232, 220, 0.2);
 }
 
+.value-dots {
+  display: none;
+}
+
 .value-card {
   position: relative;
   min-height: 360px;
@@ -4140,14 +4144,48 @@ textarea:focus-visible {
   }
 
   .value-matrix {
-    display: block;
+    display: flex;
     margin-top: 70px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .value-matrix::-webkit-scrollbar {
+    display: none;
   }
 
   .value-card {
     min-height: 315px;
     padding: 26px 24px 30px;
-    border-right: 1px solid rgba(239, 232, 220, 0.2);
+    border-right: none;
+    flex: 0 0 88%;
+    scroll-snap-align: start;
+  }
+
+  .value-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 22px;
+  }
+
+  .value-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    border: none;
+    padding: 0;
+    background: rgba(239, 232, 220, 0.3);
+    transition: background 0.3s ease, width 0.3s ease;
+    cursor: pointer;
+  }
+
+  .value-dot.is-active {
+    background: var(--brass, #c9a24b);
+    width: 20px;
+    border-radius: 4px;
   }
 
   .value-swatch {
@@ -5589,6 +5627,9 @@ textarea:focus-visible {
   grid-template-columns: repeat(4, 1fr);
   gap: 40px 20px;
 }
+.collections-dots {
+  display: none;
+}
 @media (max-width: 1100px) {
   .collections-grid-2row {
     grid-template-columns: repeat(3, 1fr);
@@ -5601,7 +5642,46 @@ textarea:focus-visible {
 }
 @media (max-width: 600px) {
   .collections-grid-2row {
-    grid-template-columns: 1fr;
+    display: flex;
+    grid-template-columns: unset;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    gap: 16px;
+  }
+
+  .collections-grid-2row::-webkit-scrollbar {
+    display: none;
+  }
+
+  .collections-grid-2row .collection-card {
+    flex: 0 0 88%;
+    scroll-snap-align: start;
+  }
+
+  .collections-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 22px;
+  }
+
+  .collections-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    border: none;
+    padding: 0;
+    background: rgba(20, 45, 45, 0.2);
+    transition: background 0.3s ease, width 0.3s ease;
+    cursor: pointer;
+  }
+
+  .collections-dot.is-active {
+    background: var(--brass, #c9a24b);
+    width: 20px;
+    border-radius: 4px;
   }
 }
 
