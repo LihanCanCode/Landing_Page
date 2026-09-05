@@ -132,12 +132,8 @@ html {
   scroll-behavior: smooth;
   background: var(--teal-900);
   color-scheme: dark;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-html::-webkit-scrollbar {
-  display: none;
+  scrollbar-width: thin;
+  scrollbar-color: var(--brass) var(--teal-900);
 }
 
 body {
@@ -148,12 +144,30 @@ body {
   font-family: "Manrope", sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  scrollbar-width: thin;
+  scrollbar-color: var(--brass) var(--teal-900);
 }
 
+html::-webkit-scrollbar,
 body::-webkit-scrollbar {
-  display: none;
+  width: 9px;
+}
+
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track {
+  background: var(--teal-900);
+}
+
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--brass-light), var(--brass));
+  border-radius: 999px;
+  border: 2px solid var(--teal-900);
+}
+
+html::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover {
+  background: var(--brass-light);
 }
 
 button,
