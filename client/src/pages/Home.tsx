@@ -12,7 +12,6 @@ import FaqSection from "../components/FaqSection";
  * approved Heaven Furniture Mart photography later.
  */
 
-const heroRoom = "/assets/hero_luxury_showroom.png";
 const archMark = "/assets/heaven_emblem.png";
 
 const getMaterials = (t: any) => [
@@ -45,7 +44,7 @@ const getCollections = (t: any) => [
   { id: "dining", category: "Dining", number: "03", title: t.colDining || "Dining", items: t.colDiningItems || "Solid wood tables · Handcrafted chairs · Credenzas", specs: "Burma Teak / saddle leather / Studio Brass", price: "৳ 1,50,000", image: "/assets/collection-dining.jpg", gallery: ["/assets/collection-dining.jpg", "/assets/chair and table.jpg", "/assets/table_1.jpg"], imageAlt: "Heaven Furniture Mart marble top dining set — Dining collection" },
   { id: "office", category: "Workspace", number: "04", title: t.colOffice || "Office & Executive", items: t.colOfficeItems || "Bespoke desks · Library walls · Conference tables", specs: "Smoked oak / Italian marble / brushed metal", price: "৳ 95,000", image: "/assets/collection-office.jpg", gallery: ["/assets/collection-office.jpg", "/assets/office2.jpg", "/assets/office3.jpg", "/assets/office4.jpg", "/assets/office chair_1.jpg", "/assets/office_chair_2.jpg", "/assets/office chair_3.jpg"], imageAlt: "Heaven Furniture Mart executive leather office chair — Office collection" },
   { id: "storage", category: "Storage", number: "05", title: t.colStorage || "Storage & Wardrobes", items: t.colStorageItems || "Bespoke Almirahs · Walk-in closets · Sideboards", specs: "Solid Teak / Brass Handles", price: "৳ 85,000", image: "/assets/Almirah.jpg", gallery: ["/assets/Almirah.jpg", "/assets/almirah_2.jpg"], imageAlt: "Luxury solid wood almirah" },
-  { id: "accent", category: "Seating", number: "06", title: t.colAccent || "Accent Chairs", items: t.colAccentItems || "Lounge chairs · Occasional seating", specs: "Premium Velvet / Walnut frame", price: "৳ 35,000", image: "/assets/full room.jpg", gallery: ["/assets/full room.jpg", "/assets/largeroom.jpg"], imageAlt: "Accent lounge chair" },
+  { id: "accent", category: "Seating", number: "06", title: t.colAccent || "Accent Chairs", items: t.colAccentItems || "Lounge chairs · Occasional seating", specs: "Premium Velvet / Walnut frame", price: "৳ 35,000", image: "/assets/accent.webp", gallery: ["/assets/accent.webp", "/assets/full room.jpg", "/assets/largeroom.jpg"], imageAlt: "Accent lounge chair" },
   { id: "decor", category: "Decor", number: "07", title: t.colDecor || "Mirrors & Decor", items: t.colDecorItems || "Statement mirrors · Wall accents · Decorative pieces", specs: "Bevelled glass / Brass frame", price: "৳ 25,000", image: "/assets/Mirror.jpg", gallery: ["/assets/Mirror.jpg", "/assets/mirror2.jpg"], imageAlt: "Ornate brass-framed mirror" },
   { id: "others", category: "Others", number: "08", title: t.colOthers || "Others", items: t.colOthersItems || "Swings & jhulas · Specialty pieces · More on request", specs: "Mixed materials / Custom finishes", price: t.priceOnRequest || "Price on request", image: "/assets/dolna.jpg", gallery: ["/assets/dolna.jpg", "/assets/dolna 2.jpg"], imageAlt: "Custom furniture piece" }
 ];
@@ -139,13 +138,6 @@ export default function Home() {
   const [valueSlide, setValueSlide] = useState(0);
   const valueMatrixRef = useRef<HTMLDivElement>(null);
   const valueScrollTimeout = useRef<number | null>(null);
-
-  const roomVideos = [
-    "/assets/premium furnitures - Trim.mp4",
-    "/assets/premium room.mp4",
-    "/assets/premium office.mp4"
-  ];
-  const [roomVideoIdx, setRoomVideoIdx] = useState(0);
 
   const stageRef = useRef<HTMLDivElement>(null);
   const quoteButtonRef = useRef<HTMLButtonElement>(null);
@@ -525,26 +517,18 @@ export default function Home() {
               <div className="gallery-caption"><span>Atelier crafting / 01</span><strong>Master Artisans</strong></div>
             </div>
 
-            <div className="gallery-item video-carousel-wrapper">
+            <div className="gallery-item">
               <video
                 autoPlay
                 muted
+                loop
                 playsInline
                 className="gallery-video"
-                src={roomVideos[roomVideoIdx]}
-                onEnded={() => setRoomVideoIdx((prev) => (prev + 1) % roomVideos.length)}
+                src="/assets/brand-video.mp4"
               />
               <div className="gallery-caption">
-                <span>Premium Rooms / 0{roomVideoIdx + 1}</span>
+                <span>Premium Rooms / 01</span>
                 <strong>The Collection</strong>
-              </div>
-              <div className="video-carousel-controls">
-                <button type="button" aria-label="Previous video" onClick={() => setRoomVideoIdx((prev) => prev === 0 ? roomVideos.length - 1 : prev - 1)}>
-                  <ArrowLeft size={18} />
-                </button>
-                <button type="button" aria-label="Next video" onClick={() => setRoomVideoIdx((prev) => (prev + 1) % roomVideos.length)}>
-                  <ArrowRight size={18} />
-                </button>
               </div>
             </div>
             <motion.div
@@ -766,7 +750,7 @@ export default function Home() {
             </div>
           </motion.div>
           <motion.div variants={fadeUpVariant} className="portfolio-card">
-            <div className="portfolio-image-wrapper"><img src="/assets/portfolio_banani.png" alt="Banani Penthouse" /></div>
+            <div className="portfolio-image-wrapper"><img src="/assets/karna.jpg" alt="Karnafuli Executive Suite" /></div>
             <div className="portfolio-meta">
               <h3>{t.portfolio3Title}</h3>
               <p>{t.portfolio3Desc}</p>
@@ -889,10 +873,17 @@ export default function Home() {
               <button
                 type="button"
                 className="showroom-poster"
-                style={{ backgroundImage: `url(${heroRoom})` }}
                 aria-label="Play the Agrabad Experience Studio video"
                 onClick={() => setIsStudioPlaying(true)}
               >
+                <video
+                  className="showroom-video"
+                  src="/assets/studio.mp4"
+                  muted
+                  playsInline
+                  preload="metadata"
+                  tabIndex={-1}
+                />
                 <div className="showroom-wash" /><div className="showroom-film-label"><span>Showroom film</span><strong>Agrabad Experience Studio</strong></div><div className="showroom-play"><Play size={17} fill="currentColor" strokeWidth={1.2} /></div>
               </button>
             )}
