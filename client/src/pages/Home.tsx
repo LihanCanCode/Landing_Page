@@ -13,7 +13,7 @@ import FaqSection from "../components/FaqSection";
  */
 
 const heroRoom = "/assets/hero_luxury_showroom.png";
-const archMark = "/assets/heaven-arch-mark.svg";
+const archMark = "/assets/heaven_emblem.png";
 
 const getMaterials = (t: any) => [
   { id: "teak", group: t.matWood || "Wood", name: t.matTeakName || "Burma Teak", detail: t.matTeakDetail || "Warm honey grain / hand-finished", specs: { [t.specMoisture || "moisture"]: "10%", [t.specDensity || "density"]: "680 kg/m³", [t.specDurability || "durability"]: t.matTeakDur || "High Termite Resistance" }, className: "material-teak" },
@@ -908,7 +908,7 @@ export default function Home() {
           </motion.div>
         </motion.div>
         <motion.div variants={fadeUpVariant} className="page-container trust-panel">
-          <div className="trust-heading"><span className="showroom-eyebrow">Client stories</span><h3>Trust is<br /><em>felt.</em></h3><p>Verified homeowner stories and published project outcomes will live here once approved for release.</p></div>
+          <div className="trust-heading"><span className="showroom-eyebrow">{t.trustKicker}</span><h3>{t.trustTitle.split(' ').slice(0, -1).join(' ')}<br /><em>{t.trustTitle.split(' ').slice(-1).join(' ')}</em></h3><p>{t.trustDesc}</p></div>
           <div className="trust-carousel" aria-label="Verified client story placeholder" style={{ overflow: 'hidden' }}>
             <div className="trust-track-fade" style={{ position: 'relative', width: '100%', minHeight: '400px', display: 'flex', alignItems: 'center' }}>
               <AnimatePresence mode="wait">
