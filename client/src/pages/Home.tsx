@@ -870,7 +870,7 @@ export default function Home() {
         <div className="experience-grain" aria-hidden="true" />
         <motion.div variants={fadeUpVariant} className="page-container experience-head">
           <div className="experience-kicker"><span className="kicker-number">07</span><span className="kicker-line" /><span>{t.navExperience}</span></div>
-          <div className="experience-heading-row"><h2 id="experience-title">{t.experienceTitle.split(' ')[0]} {t.experienceTitle.split(' ')[1]}<br /><em>{t.experienceTitle.split(' ').slice(2).join(' ')}</em></h2><p>{t.experienceDesc}</p></div>
+          <div className="experience-heading-row"><h2 id="experience-title">{t.experienceIntroTitle.split(' ').slice(0, -2).join(' ')}<br /><em>{t.experienceIntroTitle.split(' ').slice(-2).join(' ')}</em></h2><p>{t.experienceIntroDesc}</p></div>
         </motion.div>
         <motion.div variants={fadeUpVariant} className="page-container showroom-panel">
           <div className="showroom-film">

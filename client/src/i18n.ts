@@ -209,7 +209,9 @@ export const i18n = {
 
     // Experience / Credibility
     experienceKicker: "Visit the studio",
+    experienceIntroTitle: "Come feel the difference.",
     experienceTitle: "Visit the Agrabad Experience Studio.",
+    experienceIntroDesc: "No renderings, no guesswork. Every finish, frame, and joint on display exactly as it arrives at your door.",
     experienceDesc: "Walk into our 5,000+ sq. ft. studio to feel the textures, inspect the joinery, and sit with our interior design consultants.",
     experienceBtn: "Get showroom directions",
     credibilityKicker: "A measured history",
@@ -452,8 +454,10 @@ export const i18n = {
 
     // Experience / Credibility
     experienceKicker: "স্টুডিও পরিদর্শনের আমন্ত্রণ",
+    experienceIntroTitle: "এসে পার্থক্যটা অনুভব করুন।",
     experienceTitle: "আসুন আমাদের আগ্রাবাদ এক্সপেরিয়েন্স স্টুডিওতে।",
     experienceDesc: "আমাদের ৫,০০০+ বর্গফুটের স্টুডিওতে এসে সরাসরি মেটেরিয়ালের ফিনিশিং দেখুন, কাঠের মান যাচাই করুন এবং আমাদের ডিজাইনারদের সাথে আলোচনা করুন।",
+    experienceIntroDesc: "কোনো ধারণা নয়, বাস্তবতা। প্রতিটি ফিনিশিং, ফ্রেম ও জোড় ঠিক যেভাবে আপনার বাসায় পৌঁছাবে, সেভাবেই এখানে প্রদর্শিত।",
     experienceBtn: "শো-রুমের লোকেশন দেখুন",
     credibilityKicker: "আমাদের অর্জনের ইতিহাস",
     credibilityTitle: "দীর্ঘদিনের বিশ্বস্ততা।",
