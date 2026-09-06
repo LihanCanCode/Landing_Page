@@ -1,5 +1,5 @@
-@import "./local-fonts.css";
 @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap');
+@import "./local-fonts.css";
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -132,8 +132,8 @@ html {
   scroll-behavior: smooth;
   background: var(--teal-900);
   color-scheme: dark;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(230, 222, 205, 0.35) var(--teal-900);
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
 }
 
 body {
@@ -144,29 +144,15 @@ body {
   font-family: "Manrope", sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(230, 222, 205, 0.35) var(--teal-900);
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
 }
 
 html::-webkit-scrollbar,
 body::-webkit-scrollbar {
-  width: 6px;
-}
-
-html::-webkit-scrollbar-track,
-body::-webkit-scrollbar-track {
-  background: var(--teal-900);
-}
-
-html::-webkit-scrollbar-thumb,
-body::-webkit-scrollbar-thumb {
-  background: rgba(230, 222, 205, 0.35);
-  border-radius: 999px;
-}
-
-html::-webkit-scrollbar-thumb:hover,
-body::-webkit-scrollbar-thumb:hover {
-  background: rgba(230, 222, 205, 0.5);
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
 @media (max-width: 900px) {

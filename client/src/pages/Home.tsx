@@ -1028,15 +1028,16 @@ export default function Home() {
           <div className="footer-location"><span className="footer-label">{t.experienceBtn.split(' ')[0]} {t.experienceBtn.split(' ')[1]}</span><p>Agrabad Access Road,<br />Chattogram, Bangladesh.<br /><small>Sat – Thu: 10:00 AM – 8:00 PM</small></p></div>
           <div className="footer-contact"><span className="footer-label">Stay in touch</span><a href="mailto:heavenfurnituremart@gmail.com"><Mail size={14} strokeWidth={1.4} />heavenfurnituremart@gmail.com</a><a href="tel:+8801960481983"><Phone size={14} strokeWidth={1.4} />+880 1960-481983</a><div className="social-links"><a href="#social-facebook" onClick={handleSocialPlaceholder} aria-label="Facebook profile placeholder"><Facebook size={16} /></a><a href="#social-instagram" onClick={handleSocialPlaceholder} aria-label="Instagram profile placeholder"><Instagram size={16} /></a><a href="#social-youtube" onClick={handleSocialPlaceholder} aria-label="YouTube profile placeholder"><Youtube size={16} /></a></div></div>
         </footer>
-        <a className="mobile-whatsapp" href={getWhatsAppLink()} target="_blank" rel="noreferrer"><MessageCircle size={17} strokeWidth={1.6} />WhatsApp the studio</a>
-        <a className="floating-whatsapp" href={getWhatsAppLink()} target="_blank" rel="noreferrer" aria-label="Chat with us on WhatsApp">
-          <div className="whatsapp-icon-wrap"><MessageCircle size={22} strokeWidth={1.8} /></div>
-          <div className="whatsapp-text">
-            <span className="whatsapp-title">Heaven Studio <span className="online-dot" /></span>
-            <span className="whatsapp-subtitle">Chat with our designers</span>
-          </div>
-        </a>
       </motion.section>
+
+      <a className="mobile-whatsapp" href={getWhatsAppLink()} target="_blank" rel="noreferrer"><MessageCircle size={17} strokeWidth={1.6} />WhatsApp the studio</a>
+      <a className="floating-whatsapp" href={getWhatsAppLink()} target="_blank" rel="noreferrer" aria-label="Chat with us on WhatsApp">
+        <div className="whatsapp-icon-wrap"><MessageCircle size={22} strokeWidth={1.8} /></div>
+        <div className="whatsapp-text">
+          <span className="whatsapp-title">Heaven Studio <span className="online-dot" /></span>
+          <span className="whatsapp-subtitle">Chat with our designers</span>
+        </div>
+      </a>
 
       <AnimatePresence>
         {selectedCollection && (
