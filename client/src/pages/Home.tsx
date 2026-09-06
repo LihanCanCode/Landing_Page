@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Check, Facebook, Instagram, Mail, MapPin, Menu, MessageCircle, MoveUpRight, Phone, Play, X, Youtube, Globe } from "lucide-react";
 import { getWhatsAppLink } from "@shared/contact";
-import { motion, AnimatePresence, useReducedMotion, Variants } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion, useInView, Variants } from "framer-motion";
 import { i18n } from "../i18n";
 import RoomARPreview from "../components/RoomARPreview";
 import FaqSection from "../components/FaqSection";
@@ -141,6 +141,8 @@ export default function Home() {
 
   const stageRef = useRef<HTMLDivElement>(null);
   const quoteButtonRef = useRef<HTMLButtonElement>(null);
+  const storyGalleryRef = useRef<HTMLDivElement>(null);
+  const storyGalleryInView = useInView(storyGalleryRef, { once: true, margin: "200px" });
 
   const getEstimate = () => {
     let base = estRoom === "Living" ? 150000 : estRoom === "Bedroom" ? 120000 : 180000;
@@ -469,9 +471,9 @@ export default function Home() {
             <div className="visual-topline" aria-hidden="true"><span>Room study / 01</span><span>29° 51' N / 91° 52' E</span></div>
             <div className={`room-frame ${isNightMode ? 'night-mode' : ''}`}>
               <div className="room-media">
-                <img src="/assets/hero_luxury_showroom.png" alt="Executive Lounge in dark teal" className={`hero-slide-img ${heroSlide === 0 ? 'is-active' : ''}`} />
-                <img src="/assets/brand-story-main.png" alt="Atelier Dining Room in charcoal slate" className={`hero-slide-img ${heroSlide === 1 ? 'is-active' : ''}`} />
-                <img src="/assets/hero-bed.jpg" alt="Sanctuary Bedroom with ambient lighting" className={`hero-slide-img ${heroSlide === 2 ? 'is-active' : ''}`} />
+                <img src="/assets/hero_luxury_showroom.png" alt="Executive Lounge in dark teal" className={`hero-slide-img ${heroSlide === 0 ? 'is-active' : ''}`} loading="eager" fetchPriority="high" />
+                <img src="/assets/brand-story-main.png" alt="Atelier Dining Room in charcoal slate" className={`hero-slide-img ${heroSlide === 1 ? 'is-active' : ''}`} loading="eager" fetchPriority="low" />
+                <img src="/assets/hero-bed.jpg" alt="Sanctuary Bedroom with ambient lighting" className={`hero-slide-img ${heroSlide === 2 ? 'is-active' : ''}`} loading="eager" fetchPriority="low" />
                 <div className="room-wash" aria-hidden="true" />
                 <div className="light-leak" aria-hidden="true" />
                 <div className="night-overlay" aria-hidden="true" />
@@ -509,10 +511,10 @@ export default function Home() {
         aria-labelledby="brand-story-title"
       >
         <div className="page-container split-story-container">
-          <div className="split-story-gallery">
+          <div className="split-story-gallery" ref={storyGalleryRef}>
             <div className="gallery-item">
-              <video autoPlay muted loop playsInline className="gallery-video">
-                <source src="/assets/crafting.mp4" type="video/mp4" />
+              <video autoPlay muted loop playsInline preload="none" className="gallery-video">
+                {storyGalleryInView && <source src="/assets/crafting.mp4" type="video/mp4" />}
               </video>
               <div className="gallery-caption"><span>Atelier crafting / 01</span><strong>Master Artisans</strong></div>
             </div>
@@ -523,8 +525,9 @@ export default function Home() {
                 muted
                 loop
                 playsInline
+                preload="none"
                 className="gallery-video"
-                src="/assets/brand-video.mp4"
+                src={storyGalleryInView ? "/assets/brand-video.mp4" : undefined}
               />
               <div className="gallery-caption">
                 <span>Premium Rooms / 01</span>
